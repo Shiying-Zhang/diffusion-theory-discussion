@@ -119,7 +119,7 @@
     </div>
 
     <div id="chartbutton">
-        <a href="index.html"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">📊 Chart</button></a>
+        <a href="interactive.html"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">📊 Interactive Chart</button></a>
     </div>
 
     <div id="aboutbutton">
@@ -135,46 +135,39 @@
     </div>
 
     <div id="distributions">
-        <h3 style="margin: 10px; font-family: 'Georgia', serif; border-bottom: 2px solid #000;">Reading Progress</h3>
+        <h3 style="margin: 10px; font-family: 'Georgia', serif; border-bottom: 2px solid #000;">Navigation</h3>
 
         <div style="margin: 15px 10px;">
-            <div style="background: #f0f0f0; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                    <span><strong>Total Papers</strong></span>
-                    <span id="stat-total">20</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 5px; color: #22c55e;">
-                    <span>✅ Completed</span>
-                    <span id="stat-completed">3</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 5px; color: #3b82f6;">
-                    <span>🔄 Reading</span>
-                    <span id="stat-reading">2</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; color: #94a3b8;">
-                    <span>⬜️ Unread</span>
-                    <span id="stat-unread">15</span>
-                </div>
-            </div>
-        </div>
-
-        <div style="margin: 15px 10px;">
-            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">📚 Paper Categories</h4>
+            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">📊 Interactive Charts</h4>
             <ul style="list-style-type: none; padding-left: 10px; line-height: 1.8;">
-                <li><a href="#" onclick="filterPapers('foundations'); return false;">• Mathematical Foundations</a></li>
-                <li><a href="#" onclick="filterPapers('diffusion'); return false;">• Diffusion Models</a></li>
-                <li><a href="#" onclick="filterPapers('sampling'); return false;">• Fast Sampling</a></li>
-                <li><a href="#" onclick="filterPapers('applications'); return false;">• Applications</a></li>
+                <li><a href="index.html">• Simple SVG Chart</a></li>
+                <li><strong><a href="interactive.html">• Interactive Network ⭐</a></strong></li>
             </ul>
         </div>
 
         <div style="margin: 15px 10px;">
-            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">🎯 Quick Links</h4>
+            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">📚 Paper Resources</h4>
             <ul style="list-style-type: none; padding-left: 10px; line-height: 1.8;">
-                <li><a href="../papers/database/papers.json">• 📄 Database (JSON)</a></li>
-                <li><a href="../scripts/search_papers.py">• 🔍 Search Script</a></li>
+                <li><a href="papers.html">• 📖 All Papers</a></li>
+                <li><a href="../Notes/DDPM.md">• 📄 DDPM Notes</a></li>
+                <li><a href="../Notes/Score-based SDE.md">• 📄 Score SDE Notes</a></li>
+            </ul>
+        </div>
+
+        <div style="margin: 15px 10px;">
+            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">🔧 Tools</h4>
+            <ul style="list-style-type: none; padding-left: 10px; line-height: 1.8;">
+                <li><a href="../scripts/search_papers.py">• 🔍 Search Papers</a></li>
                 <li><a href="../scripts/generate_report.py">• 📊 Generate Report</a></li>
-                <li><a href="../papers/USAGE.md">• 📖 Usage Guide</a></li>
+                <li><a href="../scripts/update_status.py">• ✏️ Update Status</a></li>
+            </ul>
+        </div>
+
+        <div style="margin: 15px 10px;">
+            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">💬 Community</h4>
+            <ul style="list-style-type: none; padding-left: 10px; line-height: 1.8;">
+                <li><a href="issues.html">• 💬 Issues Board</a></li>
+                <li><a href="https://github.com/Shiying-Zhang/diffusion-theory-discussion" target="_blank">• ⭐ GitHub Repo</a></li>
             </ul>
         </div>
 
