@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 Paper Reading List - Diffusion Models</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .paper-list-page {
+            position: absolute;
+            left: 26%;
+            top: 14%;
+            width: 74%;
+            height: 83%;
+            overflow: auto;
+            background: #f8f9fa;
+            padding: 40px;
+        }
+
+        .paper-list-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+        }
+
+        .paper-list-header h1 {
+            margin: 0 0 15px 0;
+            font-size: 2.5em;
+        }
+
+        .paper-list-header p {
+            margin: 0;
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .reading-tracks {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .track-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .track-card h3 {
+            margin: 0 0 15px 0;
+            color: #667eea;
+            font-size: 1.3em;
+        }
+
+        .track-card p {
+            margin: 0 0 15px 0;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .track-card ol {
+            margin: 0;
+            padding-left: 20px;
+            color: #444;
+        }
+
+        .track-card ol li {
+            margin: 8px 0;
+        }
+
+        .papers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .paper-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .paper-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        .paper-card h3 {
+            margin: 0 0 10px 0;
+            color: #1e293b;
+            font-size: 1.2em;
+        }
+
+        .paper-card .authors {
+            color: #64748b;
+            font-size: 0.95em;
+            margin-bottom: 10px;
+        }
+
+        .paper-card .meta {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+
+        .tag {
+            background: #e0e7ff;
+            color: #4f46e5;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+        }
+
+        .paper-links {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .paper-links a {
+            padding: 8px 16px;
+            background: #667eea;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.9em;
+        }
+
+        .paper-links a:hover {
+            background: #5568d3;
+        }
+
+        .status-icon {
+            font-size: 1.2em;
+        }
+
+        .section-title {
+            color: #1e293b;
+            font-size: 1.8em;
+            margin: 40px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div id="logo">
+        <h2 style="margin: 10px; font-family: 'Georgia', serif;">📚 Papers</h2>
+    </div>
+
+    <div id="header">
+        <h1 style="margin-top: 15px; font-family: 'Georgia', serif; font-weight: normal;">
+            Paper Reading List
+        </h1>
+        <p style="margin: 5px 0 0 0; font-size: 14px; color: #666;">
+            Curated by Diego & Shiying
+        </p>
+    </div>
+
+    <div id="chartbutton">
+        <a href="index.html"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">📊 Chart</button></a>
+    </div>
+
+    <div id="aboutbutton">
+        <a href="papers.html"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px; background: #e0e7ff;">📖 Reading List</button></a>
+    </div>
+
+    <div id="linksbutton">
+        <a href="../scripts/search_papers.py"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">🔍 Search</button></a>
+    </div>
+
+    <div id="contactbutton">
+        <a href="https://github.com/Shiying-Zhang/diffusion-theory-discussion/issues"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">💬 Discuss</button></a>
+    </div>
+
+    <div id="distributions">
+        <h3 style="margin: 10px; font-family: 'Georgia', serif; border-bottom: 2px solid #000;">Reading Guide</h3>
+
+        <div style="margin: 15px 10px;">
+            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">📖 Recommended Reading Order</h4>
+            <ul style="list-style-type: none; padding-left: 10px; line-height: 1.8;">
+                <li>💎 <strong>Foundation</strong> - 基础必读</li>
+                <li>🔬 <strong>Advanced</strong> - 进阶理论</li>
+                <li>💎 <strong>Seminal</strong> - 开创性工作</li>
+                <li>🔥 <strong>Recent</strong> - 近期重要进展</li>
+            </ul>
+        </div>
+
+        <div style="margin: 15px 10px;">
+            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">🎯 Quick Links</h4>
+            <ul style="list-style-type: none; padding-left: 10px; line-height: 1.8;">
+                <li><a href="../scripts/search_papers.py">• 🔍 Search Papers</a></li>
+                <li><a href="../scripts/generate_report.py">• 📊 Generate Report</a></li>
+                <li><a href="../papers/database/papers.json">• 📄 Database (JSON)</a></li>
+            </ul>
+        </div>
+
+        <div style="margin: 20px 10px; padding: 10px; background-color: #f9f9f9; border: 1px solid #ccc;">
+            <p style="font-size: 12px; line-height: 1.6; font-family: 'Georgia', serif;">
+                <strong>About:</strong> 本列表精选了扩散模型理论研究的核心论文，按照主题和难度组织。
+            </p>
+            <p style="font-size: 11px; margin-top: 8px; color: #666;">
+                "Good questions guide good discussions, which in turn inspire solid work."
+            </p>
+        </div>
+    </div>
+
+    <div class="paper-list-page">
+        <div class="paper-list-header">
+            <h1>📚 Diffusion Models: Theoretical Foundations</h1>
+            <p>Curated by Diego & Shiying | Last Updated: 2025-12-01</p>
+        </div>
+
+        <h2 class="section-title">🎯 Reading Tracks</h2>
+        <div class="reading-tracks">
+            <div class="track-card">
+                <h3>Track 1: Foundation to Practice</h3>
+                <p>初学者路径 - 从基础到实践</p>
+                <ol>
+                    <li>Score Matching (2005)</li>
+                    <li>DDPM (2020)</li>
+                    <li>EDM (2022)</li>
+                    <li>DDIM (2020)</li>
+                    <li>Guidance (2022)</li>
+                </ol>
+            </div>
+            <div class="track-card">
+                <h3>Track 2: Deep Theory</h3>
+                <p>理论研究路径 - 深入数学理论</p>
+                <ol>
+                    <li>Score Matching (2005)</li>
+                    <li>NCSN (2019)</li>
+                    <li>Thermodynamics (2015)</li>
+                    <li>Score SDE (2021)</li>
+                    <li>EDM (2022)</li>
+                </ol>
+            </div>
+            <div class="track-card">
+                <h3>Track 3: Advanced & Cutting-Edge</h3>
+                <p>进阶路径 - 前沿技术</p>
+                <ol>
+                    <li>Complete Track 1 first</li>
+                    <li>Flow Matching (2023)</li>
+                    <li>Consistency Models (2023)</li>
+                    <li>Schrödinger Bridge (2021)</li>
+                </ol>
+            </div>
+        </div>
+
+        <h2 class="section-title">📄 All Papers</h2>
+        <div class="papers-grid">
+            <div class="paper-card">
+                <h3>💎 Estimation of Non-Normalized Statistical Models by Score Matching</h3>
+                <div class="authors">Aapo Hyvärinen (2005) • JMLR</div>
+                <div class="meta">
+                    <span class="tag">foundations</span>
+                    <span class="tag">score_matching</span>
+                </div>
+                <p style="font-size: 0.9em; color: #666;">Score matching的开创性工作，奠定了后续denoising score matching的理论基础。</p>
+                <div class="paper-links">
+                    <a href="papers/paper.html?id=score_matching_2005">View Details</a>
+                    <a href="https://jmlr.org/papers/v6/hyvarinen05a.html" target="_blank">ArXiv</a>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h3>💎 Denoising Diffusion Probabilistic Models ⭐</h3>
+                <div class="authors">Jonathan Ho, Ajay Jain, Pieter Abbeel (2020) • NeurIPS</div>
+                <div class="meta">
+                    <span class="tag">foundations</span>
+                    <span class="tag">denoising_diffusion</span>
+                    <span class="status-icon">✅</span>
+                </div>
+                <p style="font-size: 0.9em; color: #666;">扩散模型的里程碑式工作，简化了训练目标，使扩散模型真正可实用。</p>
+                <div class="paper-links">
+                    <a href="papers/paper.html?id=ddpm_2020">View Details</a>
+                    <a href="https://arxiv.org/abs/2006.11239" target="_blank">ArXiv</a>
+                    <a href="../Notes/DDPM.md">📝 Notes</a>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h3>💎 Score-Based Generative Modeling through SDEs ⭐</h3>
+                <div class="authors">Yang Song, Jascha Sohl-Dickstein, et al. (2021) • ICLR</div>
+                <div class="meta">
+                    <span class="tag">foundations</span>
+                    <span class="tag">score_based_models</span>
+                    <span class="status-icon">✅</span>
+                </div>
+                <p style="font-size: 0.9em; color: #666;">将离散扩散过程推广到连续SDE框架，统一了多种扩散模型变体。</p>
+                <div class="paper-links">
+                    <a href="papers/paper.html?id=score_sde_2021">View Details</a>
+                    <a href="https://arxiv.org/abs/2011.13456" target="_blank">ArXiv</a>
+                    <a href="../Notes/Score-based SDE.md">📝 Notes</a>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h3>💎 Deep Unsupervised Learning using Nonequilibrium Thermodynamics</h3>
+                <div class="authors">Jascha Sohl-Dickstein, et al. (2015) • ICML</div>
+                <div class="meta">
+                    <span class="tag">foundations</span>
+                    <span class="tag">thermodynamics</span>
+                    <span class="status-icon">🔄</span>
+                </div>
+                <p style="font-size: 0.9em; color: #666;">第一个将热力学原理引入生成模型的工作，提出了基于扩散过程的生成建模框架。</p>
+                <div class="paper-links">
+                    <a href="papers/paper.html?id=thermodynamics_2015">View Details</a>
+                    <a href="https://arxiv.org/abs/1503.03585" target="_blank">ArXiv</a>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h3>⭐ Elucidating the Design Space of Diffusion (EDM)</h3>
+                <div class="authors">Tero Karras, et al. (2022) • NeurIPS</div>
+                <div class="meta">
+                    <span class="tag">foundations</span>
+                    <span class="tag">theory_survey</span>
+                </div>
+                <p style="font-size: 0.9em; color: #666;">系统性分析扩散模型设计空间的核心工作，提供了实用的超参数选择指南。</p>
+                <div class="paper-links">
+                    <a href="papers/paper.html?id=edm_2022">View Details</a>
+                    <a href="https://arxiv.org/abs/2206.00364" target="_blank">ArXiv</a>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h3>Generative Modeling by Estimating Gradients (NCSN)</h3>
+                <div class="authors">Yang Song, Stefano Ermon (2019) • NeurIPS</div>
+                <div class="meta">
+                    <span class="tag">foundations</span>
+                    <span class="tag">score_based_models</span>
+                    <span class="status-icon">✅</span>
+                </div>
+                <p style="font-size: 0.9em; color: #666;">现代score-based generative models的起点，通过噪声条件化score网络和Langevin动力学进行采样。</p>
+                <div class="paper-links">
+                    <a href="papers/paper.html?id=ncsn_2019">View Details</a>
+                    <a href="https://arxiv.org/abs/1907.05600" target="_blank">ArXiv</a>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h3>Denoising Diffusion Implicit Models (DDIM)</h3>
+                <div class="authors">Jiaming Song, et al. (2020) • ICLR</div>
+                <div class="meta">
+                    <span class="tag">methods</span>
+                    <span class="tag">improved_sampling</span>
+                </div>
+                <p style="font-size: 0.9em; color: #666;">提出非马尔可夫采样过程，大幅加速推理而保持生成质量。</p>
+                <div class="paper-links">
+                    <a href="papers/paper.html?id=ddim_2020">View Details</a>
+                    <a href="https://arxiv.org/abs/2010.02502" target="_blank">ArXiv</a>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h3>Improved Denoising Diffusion Probabilistic Models</h3>
+                <div class="authors">Nichol & Dhariwal (2021) • ICML</div>
+                <div class="meta">
+                    <span class="tag">methods</span>
+                    <span class="tag">training_stability</span>
+                </div>
+                <p style="font-size: 0.9em; color: #666;">对DDPM的重要改进，提升了采样质量和训练效率。</p>
+                <div class="paper-links">
+                    <a href="papers/paper.html?id=improved_ddpm_2021">View Details</a>
+                    <a href="https://arxiv.org/abs/2102.09672" target="_blank">ArXiv</a>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h3>Understanding Diffusion Models: A Unified Perspective</h3>
+                <div class="authors">Calvin Luo (2022) • ArXiv</div>
+                <div class="meta">
+                    <span class="tag">theory_survey</span>
+                </div>
+                <p style="font-size: 0.9em; color: #666;">优秀的综述性工作，从统一视角理解各种扩散模型变体。</p>
+                <div class="paper-links">
+                    <a href="papers/paper.html?id=unified_2022">View Details</a>
+                    <a href="https://arxiv.org/abs/2208.11970" target="_blank">ArXiv</a>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h3>Classifier-Free Diffusion Guidance</h3>
+                <div class="authors">Jonathan Ho, Tim Salimans (2022) • NeurIPS Workshop</div>
+                <div class="meta">
+                    <span class="tag">methods</span>
+                    <span class="tag">conditional_generation</span>
+                </div>
+                <p style="font-size: 0.9em; color: #666;">无需额外分类器的条件生成方法，通过无分类器训练实现条件控制。</p>
+                <div class="paper-links">
+                    <a href="papers/paper.html?id=guidance_2022">View Details</a>
+                    <a href="https://arxiv.org/abs/2207.12598" target="_blank">ArXiv</a>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h3>Flow Matching for Generative Modeling</h3>
+                <div class="authors">Yaron Lipman, et al. (2023) • ICLR</div>
+                <div class="meta">
+                    <span class="tag">methods</span>
+                    <span class="tag">theory_survey</span>
+                </div>
+                <p style="font-size: 0.9em; color: #666;">新的训练范式，直接学习概率流，避免扩散过程的某些限制。</p>
+                <div class="paper-links">
+                    <a href="papers/paper.html?id=flow_matching_2023">View Details</a>
+                    <a href="https://arxiv.org/abs/2210.02747" target="_blank">ArXiv</a>
+                </div>
+            </div>
+
+            <div class="paper-card">
+                <h3>Consistency Models</h3>
+                <div class="authors">Yang Song, et al. (2023) • ICML</div>
+                <div class="meta">
+                    <span class="tag">methods</span>
+                    <span class="tag">architecture</span>
+                </div>
+                <p style="font-size: 0.9em; color: #666;">新的生成模型范式，实现单步生成，显著提升效率。</p>
+                <div class="paper-links">
+                    <a href="papers/paper.html?id=consistency_2023">View Details</a>
+                    <a href="https://arxiv.org/abs/2303.01469" target="_blank">ArXiv</a>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin: 40px 0; padding: 30px; background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <h3 style="color: #1e293b; margin: 0 0 15px 0;">💡 How to Use This List</h3>
+            <ol style="line-height: 2; color: #666;">
+                <li>选择合适的路径：根据你的背景选择 Foundation、Theory 或 Advanced 路径</li>
+                <li>主动提问：阅读过程中的困惑请在 Issues 中提出</li>
+                <li>做笔记：考虑在 <code>Notes/</code> 文件夹中记录你的理解和疑问</li>
+                <li>参与讨论：欢迎在相关问题讨论中分享你的见解</li>
+            </ol>
+        </div>
+
+        <div style="margin: 40px 0; padding: 30px; background: #f0f8ff; border-radius: 10px; border: 2px solid #667eea;">
+            <h3 style="color: #667eea; margin: 0 0 15px 0;">🤝 Contribute</h3>
+            <p style="color: #666; line-height: 1.8;">
+                发现好论文？欢迎通过 Pull Request 添加，或在 Issues 中推荐！
+            </p>
+            <div style="margin-top: 15px;">
+                <a href="https://github.com/Shiying-Zhang/diffusion-theory-discussion/issues/new" style="display: inline-block; padding: 10px 20px; background: #667eea; color: white; border-radius: 6px; text-decoration: none;">💬 Start Discussion</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
