@@ -1,0 +1,137 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Paper Reading List Schema",
+  "description": "Schema for storing paper metadata in the reading list",
+  "type": "object",
+  "properties": {
+    "papers": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/paper" }
+    }
+  },
+  "definitions": {
+    "paper": {
+      "type": "object",
+      "required": ["id", "title", "authors", "year", "topics", "level", "priority", "status"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the paper",
+          "pattern": "^[a-z0-9_]+$"
+        },
+        "title": {
+          "type": "string",
+          "description": "Full title of the paper"
+        },
+        "authors": {
+          "type": "array",
+          "description": "List of authors",
+          "items": { "type": "string" }
+        },
+        "venue": {
+          "type": "string",
+          "description": "Conference or journal name",
+          "enum": ["NeurIPS", "ICML", "ICLR", "AAAI", "IJCAI", "CVPR", "ICCV", "ECCV", "ArXiv", "JMLR", "PAMI", "Other"],
+          "default": "ArXiv"
+        },
+        "year": {
+          "type": "integer",
+          "minimum": 2010,
+          "maximum": 2030
+        },
+        "topics": {
+          "type": "array",
+          "description": "Topic categories",
+          "items": {
+            "type": "string",
+            "enum": [
+              "foundations",
+              "score_based_models",
+              "denoising_diffusion",
+              "improved_sampling",
+              "training_stability",
+              "architecture",
+              "conditional_generation",
+              "image_generation",
+              "video_generation",
+              "3d_generation",
+              "multimodal",
+              "theory_survey",
+              "application_survey"
+            ]
+          },
+          "minItems": 1
+        },
+        "level": {
+          "type": "string",
+          "description": "Difficulty level",
+          "enum": ["beginner", "intermediate", "advanced"]
+        },
+        "priority": {
+          "type": "string",
+          "description": "Reading priority",
+          "enum": ["high", "medium", "low"]
+        },
+        "status": {
+          "type": "string",
+          "description": "Reading status",
+          "enum": ["unread", "reading", "completed", "review"]
+        },
+        "arxiv_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "ArXiv URL"
+        },
+        "pdf_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Direct PDF URL"
+        },
+        "code_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Code repository URL"
+        },
+        "tags": {
+          "type": "array",
+          "description": "Additional keywords",
+          "items": { "type": "string" }
+        },
+        "notes_file": {
+          "type": "string",
+          "description": "Path to reading notes file"
+        },
+        "date_added": {
+          "type": "string",
+          "format": "date",
+          "description": "Date added to reading list"
+        },
+        "date_read": {
+          "type": ["string", "null"],
+          "format": "date",
+          "description": "Date completed reading"
+        },
+        "rating": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "maximum": 5,
+          "description": "Personal rating 1-5"
+        },
+        "summary": {
+          "type": "string",
+          "description": "Brief summary of the paper"
+        },
+        "key_contributions": {
+          "type": "array",
+          "description": "Key contributions",
+          "items": { "type": "string" }
+        },
+        "related_papers": {
+          "type": "array",
+          "description": "IDs of related papers",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

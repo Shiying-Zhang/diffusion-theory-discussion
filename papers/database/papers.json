@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0",
+  "last_updated": "2025-12-01",
+  "papers": [
+    {
+      "id": "ddpm_2020",
+      "title": "Denoising Diffusion Probabilistic Models",
+      "authors": ["Jonathan Ho", "Ajay Jain", "Pieter Abbeel"],
+      "venue": "NeurIPS",
+      "year": 2020,
+      "topics": ["foundations", "denoising_diffusion"],
+      "level": "intermediate",
+      "priority": "high",
+      "status": "completed",
+      "arxiv_url": "https://arxiv.org/abs/2006.11239",
+      "pdf_url": "https://arxiv.org/pdf/2006.11239.pdf",
+      "code_url": "https://github.com/hojonathanho/diffusion",
+      "tags": ["ddpm", "noise_prediction", "markov_chain", "variational_inference"],
+      "notes_file": "../Notes/DDPM.md",
+      "date_added": "2025-12-01",
+      "date_read": "2025-12-01",
+      "rating": 5,
+      "summary": "提出了去噪扩散概率模型（DDPM），通过正向加噪和反向去噪过程进行生成建模。使用变分下界优化噪声预测网络，为扩散模型奠定了基础理论框架。",
+      "key_contributions": [
+        "提出基于马尔可夫链的扩散过程建模",
+        "推导变分下界作为训练目标",
+        "简化噪声预测的训练目标",
+        "建立扩散模型的数学基础"
+      ],
+      "related_papers": []
+    },
+    {
+      "id": "score_based_sde_2021",
+      "title": "Score-Based Generative Modeling through Stochastic Differential Equations",
+      "authors": ["Yang Song", "Jascha Sohl-Dickstein", "Jiaming Song", "David P. Reichman", "Diederik P. Kingma"],
+      "venue": "ICLR",
+      "year": 2021,
+      "topics": ["foundations", "score_based_models"],
+      "level": "advanced",
+      "priority": "high",
+      "status": "completed",
+      "arxiv_url": "https://arxiv.org/abs/2011.13456",
+      "pdf_url": "https://arxiv.org/pdf/2011.13456.pdf",
+      "code_url": "https://github.com/yang-song/score_sde",
+      "tags": ["score_matching", "sde", "continuous_diffusion", "probability_flow"],
+      "notes_file": "../Notes/Score-based SDE.md",
+      "date_added": "2025-12-01",
+      "date_read": "2025-12-01",
+      "rating": 5,
+      "summary": "将扩散模型统一到随机微分方程（SDE）框架下，提出了分数匹配的连续时间视角。证明了概率流ODE和SDE之间的关系，为采样算法提供了理论基础。",
+      "key_contributions": [
+        "将扩散过程推广到连续SDE框架",
+        "提出概率流ODE的生成模型视角",
+        "基于分数匹配的连续时间建模",
+        "统一多种扩散模型变体"
+      ],
+      "related_papers": ["ddpm_2020"]
+    },
+    {
+      "id": "ddim_2020",
+      "title": "Denoising Diffusion Implicit Models",
+      "authors": ["Jiaming Song", "Chenlin Meng", "Stefano Ermon"],
+      "venue": "ArXiv",
+      "year": 2020,
+      "topics": ["methods", "improved_sampling"],
+      "level": "intermediate",
+      "priority": "high",
+      "status": "unread",
+      "arxiv_url": "https://arxiv.org/abs/2010.02502",
+      "pdf_url": "https://arxiv.org/pdf/2010.02502.pdf",
+      "code_url": "https://github.com/ermongroup/ddim",
+      "tags": ["fast_sampling", "deterministic_reverse", "accelerated_generation"],
+      "notes_file": null,
+      "date_added": "2025-12-01",
+      "date_read": null,
+      "rating": null,
+      "summary": "提出确定性去噪扩散隐式模型，通过隐式采样器加速生成过程。减少采样步数的同时保持生成质量。",
+      "key_contributions": [
+        "提出确定性反向过程",
+        "显著减少采样步数",
+        "保持生成质量不变",
+        "为后续加速采样方法奠定基础"
+      ],
+      "related_papers": ["ddpm_2020"]
+    }
+  ]
+}
