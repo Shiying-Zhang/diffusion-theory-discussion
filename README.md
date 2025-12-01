@@ -25,6 +25,46 @@
 ### 2. 问题讨论部分  
 以具体问题为切入点，展开理论探讨：
 
+## 🌐 交互式网站
+
+我们为项目构建了一个**交互式论文阅读网站**，提供可视化学习体验：
+
+### 🔗 网站链接
+**👉 [访问网站：https://shiying-zhang.github.io/diffusion-theory-discussion/](https://shiying-zhang.github.io/diffusion-theory-discussion/)**
+
+### ✨ 网站功能
+
+#### 📊 交互式理论图表
+- **上半部分**：8篇核心论文的关系网络图，支持鼠标悬停高亮
+- **下半部分**：Diffusion理论关键变量定义（x₀, xₜ, ε, αₜ等）
+- 仿照[William & Mary参考网站](https://www.math.wm.edu/~leemis/chart/UDR/UDR.html)设计
+
+#### 📚 论文阅读列表
+- **11篇核心论文**：从基础理论到前沿发展的完整覆盖
+- **3条阅读路径**：
+  - 🎯 Track 1: Foundation to Practice（初学者路径）
+  - 🔬 Track 2: Deep Theory（理论研究路径）
+  - 🔥 Track 3: Advanced & Cutting-Edge（进阶路径）
+- **状态追踪**：✅已完成 / 🔄阅读中 / ⬜未读
+
+#### 💬 Issues可视化
+- 实时显示GitHub仓库讨论
+- 按类型和状态过滤
+- 一键跳转到GitHub参与讨论
+
+#### 📝 Notes集成
+- 链接到详细笔记（DDPM、Score-based SDE）
+- 所有页面都有快速访问
+
+### 📖 使用指南
+1. **从主页面开始**：浏览交互式图表，了解论文关系
+2. **选择阅读路径**：根据背景选择合适的论文阅读顺序
+3. **查看论文详情**：点击论文卡片查看摘要、贡献和ArXiv链接
+4. **参与讨论**：在Issues页面查看或提出问题
+5. **阅读笔记**：访问相关论文的详细笔记
+
+---
+
 ## 🚀 快速导航
 
 ### 最新内容
