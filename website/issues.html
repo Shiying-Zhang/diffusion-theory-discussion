@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💬 Discussion - Diffusion Models</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .issues-page {
+            position: absolute;
+            left: 26%;
+            top: 14%;
+            width: 74%;
+            height: 83%;
+            overflow: auto;
+            background: #f8f9fa;
+            padding: 40px;
+        }
+
+        .issues-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+        }
+
+        .issues-header h1 {
+            margin: 0 0 15px 0;
+            font-size: 2.5em;
+        }
+
+        .issues-header p {
+            margin: 0;
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .issues-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            margin: 0;
+            font-size: 2.5em;
+            color: #667eea;
+        }
+
+        .stat-card p {
+            margin: 5px 0 0 0;
+            color: #64748b;
+            font-size: 0.9em;
+        }
+
+        .filter-bar {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .issues-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .issue-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .issue-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        .issue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .issue-title {
+            margin: 0;
+            color: #1e293b;
+            font-size: 1.3em;
+            line-height: 1.4;
+        }
+
+        .issue-number {
+            color: #94a3b8;
+            font-size: 0.9em;
+            white-space: nowrap;
+            margin-left: 15px;
+        }
+
+        .issue-meta {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #64748b;
+        }
+
+        .issue-labels {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .label {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+
+        .label.question {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .label.discussion {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .label.theory {
+            background: #f3e8ff;
+            color: #6b21a8;
+        }
+
+        .label.bug {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .label.enhancement {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .issue-body {
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .issue-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .issue-author {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9em;
+        }
+
+        .author-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #667eea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .issue-actions {
+            display: flex;
+            gap: 10px;
+            font-size: 0.9em;
+            color: #64748b;
+        }
+
+        .issue-action {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            background: #f1f5f9;
+            border-radius: 6px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #64748b;
+        }
+
+        .error {
+            text-align: center;
+            padding: 60px;
+            color: #ef4444;
+        }
+
+        .refresh-btn {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 20px;
+        }
+
+        .refresh-btn:hover {
+            background: #5568d3;
+        }
+
+        .back-link {
+            position: absolute;
+            left: 26%;
+            top: 5%;
+            font-size: 14px;
+            z-index: 100;
+        }
+
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div id="logo">
+        <h2 style="margin: 10px; font-family: 'Georgia', serif;">💬 Issues</h2>
+    </div>
+
+    <div id="header">
+        <h1 style="margin-top: 15px; font-family: 'Georgia', serif; font-weight: normal;">
+            Discussion Issues
+        </h1>
+        <p style="margin: 5px 0 0 0; font-size: 14px; color: #666;">
+            GitHub Issues Visualization
+        </p>
+    </div>
+
+    <div id="chartbutton">
+        <a href="index.html"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">📊 Chart</button></a>
+    </div>
+
+    <div id="aboutbutton">
+        <a href="papers.html"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">📖 Papers</button></a>
+    </div>
+
+    <div id="linksbutton">
+        <a href="issues.html"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px; background: #e0e7ff;">💬 Issues</button></a>
+    </div>
+
+    <div id="contactbutton">
+        <a href="https://github.com/Shiying-Zhang/diffusion-theory-discussion/issues/new" target="_blank"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">➕ New Issue</button></a>
+    </div>
+
+    <div id="distributions">
+        <h3 style="margin: 10px; font-family: 'Georgia', serif; border-bottom: 2px solid #000;">About Issues</h3>
+
+        <div style="margin: 15px 10px;">
+            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">💡 How It Works</h4>
+            <p style="font-size: 0.9em; line-height: 1.6; color: #666;">
+                This page automatically fetches and displays GitHub Issues from our repository. Click on any issue to view it on GitHub.
+            </p>
+        </div>
+
+        <div style="margin: 15px 10px;">
+            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">🏷️ Issue Types</h4>
+            <ul style="list-style-type: none; padding-left: 10px; line-height: 1.8; font-size: 0.9em;">
+                <li><span class="label question">question</span> Questions about diffusion models</li>
+                <li><span class="label discussion">discussion</span> Open discussions</li>
+                <li><span class="label theory">theory</span> Theoretical questions</li>
+                <li><span class="label enhancement">enhancement</span> Feature requests</li>
+            </ul>
+        </div>
+
+        <div style="margin: 15px 10px;">
+            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">🚀 Quick Links</h4>
+            <ul style="list-style-type: none; padding-left: 10px; line-height: 1.8;">
+                <li><a href="https://github.com/Shiying-Zhang/diffusion-theory-discussion/issues" target="_blank">• View on GitHub</a></li>
+                <li><a href="https://github.com/Shiying-Zhang/diffusion-theory-discussion/issues/new" target="_blank">• Create New Issue</a></li>
+            </ul>
+        </div>
+
+        <div style="margin: 20px 10px; padding: 10px; background-color: #f9f9f9; border: 1px solid #ccc;">
+            <p style="font-size: 12px; line-height: 1.6; font-family: 'Georgia', serif;">
+                <strong>Note:</strong> Issues are fetched in real-time from GitHub API. Last updated: <span id="last-updated">-</span>
+            </p>
+        </div>
+    </div>
+
+    <div class="issues-page">
+        <div class="back-link">
+            <a href="index.html">← Back to Chart</a>
+        </div>
+
+        <div id="loading" class="loading">
+            <h2>⏳ Loading Issues...</h2>
+            <p>Fetching data from GitHub...</p>
+        </div>
+
+        <div id="error" class="error" style="display: none;">
+            <h2>❌ Failed to Load Issues</h2>
+            <p id="error-message">Unable to fetch GitHub Issues. This might be due to API rate limits or network issues.</p>
+            <button class="refresh-btn" onclick="fetchIssues()">🔄 Try Again</button>
+            <p style="margin-top: 20px; font-size: 0.9em;">
+                Alternatively, <a href="https://github.com/Shiying-Zhang/diffusion-theory-discussion/issues" target="_blank" style="color: #667eea;">view issues directly on GitHub</a>
+            </p>
+        </div>
+
+        <div id="issues-content" style="display: none;">
+            <div class="issues-header">
+                <h1>💬 Discussion Board</h1>
+                <p>Community discussions, questions, and insights about diffusion model theory</p>
+            </div>
+
+            <div class="issues-stats" id="issues-stats">
+                <div class="stat-card">
+                    <h3 id="total-issues">-</h3>
+                    <p>Total Issues</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="open-issues">-</h3>
+                    <p>Open</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="closed-issues">-</h3>
+                    <p>Closed</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="questions-count">-</h3>
+                    <p>Questions</p>
+                </div>
+            </div>
+
+            <div class="filter-bar">
+                <h4 style="margin: 0 0 15px 0; color: #1e293b;">Filter by Type:</h4>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filterIssues('all')">All</button>
+                    <button class="filter-btn" onclick="filterIssues('question')">Questions</button>
+                    <button class="filter-btn" onclick="filterIssues('discussion')">Discussions</button>
+                    <button class="filter-btn" onclick="filterIssues('theory')">Theory</button>
+                    <button class="filter-btn" onclick="filterIssues('enhancement')">Enhancements</button>
+                </div>
+            </div>
+
+            <div class="issues-list" id="issues-list">
+                <!-- Issues will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allIssues = [];
+        let currentFilter = 'all';
+
+        async function fetchIssues() {
+            const loadingEl = document.getElementById('loading');
+            const errorEl = document.getElementById('error');
+            const contentEl = document.getElementById('issues-content');
+
+            loadingEl.style.display = 'block';
+            errorEl.style.display = 'none';
+            contentEl.style.display = 'none';
+
+            try {
+                const response = await fetch('https://api.github.com/repos/Shiying-Zhang/diffusion-theory-discussion/issues?state=all&per_page=50');
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const issues = await response.json();
+                allIssues = issues;
+
+                updateStats(issues);
+                renderIssues(issues);
+                updateTimestamp();
+
+                loadingEl.style.display = 'none';
+                contentEl.style.display = 'block';
+            } catch (error) {
+                console.error('Error fetching issues:', error);
+                loadingEl.style.display = 'none';
+                errorEl.style.display = 'block';
+                errorEl.querySelector('#error-message').textContent =
+                    `Error: ${error.message}. Please check your internet connection and try again.`;
+            }
+        }
+
+        function updateStats(issues) {
+            const total = issues.length;
+            const open = issues.filter(i => i.state === 'open').length;
+            const closed = issues.filter(i => i.state === 'closed').length;
+            const questions = issues.filter(i =>
+                i.labels.some(l => l.name.toLowerCase().includes('question'))
+            ).length;
+
+            document.getElementById('total-issues').textContent = total;
+            document.getElementById('open-issues').textContent = open;
+            document.getElementById('closed-issues').textContent = closed;
+            document.getElementById('questions-count').textContent = questions;
+        }
+
+        function renderIssues(issues) {
+            const issuesList = document.getElementById('issues-list');
+
+            let filteredIssues = issues;
+            if (currentFilter !== 'all') {
+                filteredIssues = issues.filter(issue =>
+                    issue.labels.some(label =>
+                        label.name.toLowerCase().includes(currentFilter)
+                    )
+                );
+            }
+
+            if (filteredIssues.length === 0) {
+                issuesList.innerHTML = '<p style="text-align: center; color: #94a3b8; padding: 40px;">No issues found for this filter.</p>';
+                return;
+            }
+
+            issuesList.innerHTML = filteredIssues.map(issue => {
+                const issueDate = new Date(issue.created_at).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+
+                const firstChar = issue.user.login.charAt(0).toUpperCase();
+                const truncatedBody = issue.body.length > 200
+                    ? issue.body.substring(0, 200) + '...'
+                    : issue.body;
+
+                return `
+                    <div class="issue-card" onclick="window.open('${issue.html_url}', '_blank')" style="cursor: pointer;">
+                        <div class="issue-header">
+                            <h3 class="issue-title">${escapeHtml(issue.title)}</h3>
+                            <span class="issue-number">#${issue.number}</span>
+                        </div>
+
+                        <div class="issue-meta">
+                            <span>${issue.state === 'open' ? '🟢' : '🔴'} ${issue.state.toUpperCase()}</span>
+                            <span>📅 ${issueDate}</span>
+                            <span>💬 ${issue.comments} comments</span>
+                        </div>
+
+                        ${issue.labels.length > 0 ? `
+                        <div class="issue-labels">
+                            ${issue.labels.map(label => `
+                                <span class="label ${getLabelClass(label.name)}">${escapeHtml(label.name)}</span>
+                            `).join('')}
+                        </div>
+                        ` : ''}
+
+                        <div class="issue-body">
+                            ${escapeHtml(truncatedBody)}
+                        </div>
+
+                        <div class="issue-footer">
+                            <div class="issue-author">
+                                <div class="author-avatar">${firstChar}</div>
+                                <span>${escapeHtml(issue.user.login)}</span>
+                            </div>
+                            <div class="issue-actions">
+                                <span class="issue-action">👁️ ${issue.views || 0}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterIssues(filter) {
+            currentFilter = filter;
+
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Re-render issues
+            renderIssues(allIssues);
+        }
+
+        function getLabelClass(labelName) {
+            const name = labelName.toLowerCase();
+            if (name.includes('question')) return 'question';
+            if (name.includes('discussion')) return 'discussion';
+            if (name.includes('theory')) return 'theory';
+            if (name.includes('bug')) return 'bug';
+            if (name.includes('enhancement') || name.includes('feature')) return 'enhancement';
+            return '';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function updateTimestamp() {
+            const now = new Date().toLocaleString();
+            document.getElementById('last-updated').textContent = now;
+        }
+
+        // Fetch issues when page loads
+        window.addEventListener('load', fetchIssues);
+    </script>
+</body>
+</html>
