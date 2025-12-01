@@ -1,0 +1,59 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Copy website files to pages
+        run: |
+          # Create pages directory
+          mkdir -p ./_pages_temp
+
+          # Copy all website files to temporary location
+          cp -r website/* ./_pages_temp/
+
+          # Copy root level files that are needed
+          cp README.md ./_pages_temp/
+          cp -r Notes ./_pages_temp/ 2>/dev/null || true
+
+          # Move interactive.html to index.html as the main page
+          if [ -f ./_pages_temp/interactive.html ]; then
+            cp ./_pages_temp/interactive.html ./_pages_temp/index.html
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./_pages_temp
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+

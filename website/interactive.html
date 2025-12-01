@@ -314,20 +314,41 @@
                     </text>
 
                     <!-- Connections (drawn first so they appear behind nodes) -->
-                    <!-- Score Matching connections -->
-                    <line class="connection-line" data-from="score_matching" data-to="denoising" x1="200" y1="120" x2="400" y2="120"/>
-                    <line class="connection-line" data-from="score_matching" data-to="ncsn" x1="200" y1="120" x2="600" y2="120"/>
+                    <!-- Score Matching to Denoising -->
+                    <line class="connection-line" data-from="score_matching" data-to="denoising"
+                          x1="245" y1="120" x2="355" y2="120"/>
 
-                    <!-- DDPM connections -->
-                    <line class="connection-line" data-from="thermodynamics" data-to="ddpm" x1="1000" y1="200" x2="200" y2="300"/>
-                    <line class="connection-line" data-from="denoising" data-to="ddpm" x1="400" y1="200" x2="200" y2="300"/>
-                    <line class="connection-line" data-from="ddpm" data-to="edm" x1="200" y1="350" x2="700" y2="420"/>
-                    <line class="connection-line" data-from="ddpm" data-to="ddim" x1="250" y1="400" x2="600" y2="400"/>
-                    <line class="connection-line" data-from="ddpm" data-to="improved" x1="250" y1="400" x2="200" y2="500"/>
+                    <!-- Score Matching to NCSN -->
+                    <line class="connection-line" data-from="score_matching" data-to="ncsn"
+                          x1="245" y1="120" x2="555" y2="120"/>
 
-                    <!-- Score SDE connections -->
-                    <line class="connection-line" data-from="ncsn" data-to="score_sde" x1="600" y1="200" x2="600" y2="300"/>
-                    <line class="connection-line" data-from="score_sde" data-to="edm" x1="600" y1="350" x2="700" y2="420"/>
+                    <!-- Denoising to DDPM -->
+                    <line class="connection-line" data-from="denoising" data-to="ddpm"
+                          x1="400" y1="165" x2="200" y2="240"/>
+
+                    <!-- Thermodynamics to DDPM -->
+                    <line class="connection-line" data-from="thermodynamics" data-to="ddpm"
+                          x1="1000" y1="165" x2="260" y2="300"/>
+
+                    <!-- NCSN to Score SDE -->
+                    <line class="connection-line" data-from="ncsn" data-to="score_sde"
+                          x1="600" y1="165" x2="600" y2="240"/>
+
+                    <!-- DDPM to EDM -->
+                    <line class="connection-line" data-from="ddpm" data-to="edm"
+                          x1="240" y1="300" x2="620" y2="420"/>
+
+                    <!-- DDPM to DDIM -->
+                    <line class="connection-line" data-from="ddpm" data-to="ddim"
+                          x1="260" y1="340" x2="555" y2="400"/>
+
+                    <!-- DDPM to Improved -->
+                    <line class="connection-line" data-from="ddpm" data-to="improved"
+                          x1="200" y1="360" x2="200" y2="455"/>
+
+                    <!-- Score SDE to EDM -->
+                    <line class="connection-line" data-from="score_sde" data-to="edm"
+                          x1="660" y1="340" x2="780" y2="420"/>
 
                     <!-- Paper Nodes -->
                     <!-- Foundational Papers -->
