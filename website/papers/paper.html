@@ -1,0 +1,414 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Paper Details - Diffusion Models</title>
+    <meta name="author" content="Diego & Shiying Zhang"/>
+    <link rel="stylesheet" type="text/css" href="../style.css" />
+    <script>
+        // Paper database - this would normally be loaded from a JSON file
+        const PAPERS = {
+            'score_matching_2005': {
+                title: 'Estimation of Non-Normalized Statistical Models by Score Matching',
+                authors: ['Aapo Hyvärinen'],
+                venue: 'JMLR',
+                year: 2005,
+                status: 'unread',
+                priority: 'high',
+                level: 'advanced',
+                arxiv: 'https://jmlr.org/papers/v6/hyvarinen05a.html',
+                concepts: ['Score Function', 'Fisher Divergence', 'Implicit Score Matching'],
+                summary: 'Score matching的开创性工作，奠定了后续denoising score matching的理论基础。通过最小化Fisher散度而非似然来估计概率分布，避免了配分函数的计算。',
+                contributions: [
+                    '提出score matching方法，避免计算配分函数',
+                    '建立Fisher散度与score function估计的联系',
+                    '为后续去噪分数匹配奠定理论基础'
+                ],
+                whyRead: '理解扩散模型中score function概念的基础必读文献'
+            },
+            'denoising_2011': {
+                title: 'A Connection Between Score Matching and Denoi sing Autoencoders',
+                authors: ['Pascal Vincent'],
+                venue: 'Neural Computation',
+                year: 2011,
+                status: 'unread',
+                priority: 'high',
+                level: 'intermediate',
+                arxiv: 'https://www.iro.umontreal.ca/~vincentp/Publications/smdae_techreport.pdf',
+                concepts: ['Denoising Score Matching', 'Autoencoders', 'Noise Perturbation'],
+                summary: '揭示了score matching与denoising之间的深刻联系，证明去噪自编码器的训练目标等价于denoising score matching。',
+                contributions: [
+                    '建立score matching与denoising的理论联系',
+                    '提出denoising score matching变体',
+                    '为噪声条件下的生成建模铺平道路'
+                ],
+                whyRead: '理解噪声条件化生成模型的理论基础'
+            },
+            'ncsn_2019': {
+                title: 'Generative Modeling by Estimating Gradients of the Data Distribution',
+                authors: ['Yang Song', 'Stefano Ermon'],
+                venue: 'NeurIPS',
+                year: 2019,
+                status: 'completed',
+                priority: 'high',
+                level: 'advanced',
+                arxiv: 'https://arxiv.org/abs/1907.05600',
+                concepts: ['Score Network', 'Langevin Dynamics', 'Annealed Noise'],
+                summary: '现代score-based generative models的起点，通过噪声条件化score网络和Langevin动力学进行采样。',
+                contributions: [
+                    '提出噪声条件化score网络',
+                    '使用Langevin动力学进行采样',
+                    '建立了分数匹配的现代生成模型框架'
+                ],
+                whyRead: '理解现代扩散模型的理论基石',
+                rating: 5,
+                notes: 'Notes/NCSN.md'
+            },
+            'thermodynamics_2015': {
+                title: 'Deep Unsupervised Learning using Nonequilibrium Thermodynamics',
+                authors: ['Jascha Sohl-Dickstein', 'Eric D. Weiss', 'Shyam Nallapati', 'Shane Legg'],
+                venue: 'ICML',
+                year: 2015,
+                status: 'reading',
+                priority: 'high',
+                level: 'intermediate',
+                arxiv: 'https://arxiv.org/abs/1503.03585',
+                concepts: ['Forward Diffusion', 'Reverse Diffusion', 'Thermodynamic Inspiration'],
+                summary: '第一个将热力学原理引入生成模型的工作，提出了基于扩散过程的生成建模框架。',
+                contributions: [
+                    '将热力学非平衡过程引入机器学习',
+                    '提出前向扩散和反向扩散过程',
+                    '奠定扩散模型的理论基础'
+                ],
+                whyRead: '理解扩散模型的热力学直觉和理论基础'
+            },
+            'ddpm_2020': {
+                title: 'Denoising Diffusion Probabilistic Models',
+                authors: ['Jonathan Ho', 'Ajay Jain', 'Pieter Abbeel'],
+                venue: 'NeurIPS',
+                year: 2020,
+                status: 'completed',
+                priority: 'high',
+                level: 'intermediate',
+                arxiv: 'https://arxiv.org/abs/2006.11239',
+                code: 'https://github.com/hojonathanho/diffusion',
+                concepts: ['Markov Chain', 'Simplified Loss', 'Variance Schedule', 'ELBO'],
+                summary: 'DDPM的里程碑式工作，简化了训练目标，使扩散模型真正可实用。',
+                contributions: [
+                    '简化噪声预测的训练目标',
+                    '提出方差调度策略',
+                    '建立了现代扩散模型的数学框架'
+                ],
+                whyRead: '扩散模型的里程碑，理解现代扩散模型必读',
+                rating: 5,
+                notes: '../Notes/DDPM.md'
+            },
+            'improved_ddpm_2021': {
+                title: 'Improved Denoising Diffusion Probabilistic Models',
+                authors: ['Alexander Quinn Nichol', 'Prafulla Dhariwal'],
+                venue: 'ICML',
+                year: 2021,
+                status: 'unread',
+                priority: 'high',
+                level: 'intermediate',
+                arxiv: 'https://arxiv.org/abs/2102.09672',
+                concepts: ['Learned Variance', 'Hybrid Loss', 'Improved Schedule'],
+                summary: '对DDPM的重要改进，提升了采样质量和训练效率。',
+                contributions: [
+                    '提出学习方差而非固定方差',
+                    '引入混合训练目标',
+                    '改进噪声调度策略'
+                ],
+                whyRead: '理解DDPM的实际改进和优化技巧'
+            },
+            'ddim_2020': {
+                title: 'Denoising Diffusion Implicit Models',
+                authors: ['Jiaming Song', 'Chenlin Meng', 'Stefano Ermon'],
+                venue: 'ICLR',
+                year: 2021,
+                status: 'unread',
+                priority: 'high',
+                level: 'intermediate',
+                arxiv: 'https://arxiv.org/abs/2010.02502',
+                code: 'https://github.com/ermongroup/ddim',
+                concepts: ['Non-Markovian', 'Deterministic Sampling', 'Fast Generation'],
+                summary: '提出非马尔可夫采样过程，大幅加速推理而保持生成质量。',
+                contributions: [
+                    '提出确定性反向过程',
+                    '显著减少采样步数',
+                    '保持生成质量不变'
+                ],
+                whyRead: '理解加速采样和实际部署的关键技术'
+            },
+            'score_sde_2021': {
+                title: 'Score-Based Generative Modeling through Stochastic Differential Equations',
+                authors: ['Yang Song', 'Jascha Sohl-Dickstein', 'Jiaming Song', 'David P. Reichman', 'Diederik P. Kingma'],
+                venue: 'ICLR',
+                year: 2021,
+                status: 'completed',
+                priority: 'high',
+                level: 'advanced',
+                arxiv: 'https://arxiv.org/abs/2011.13456',
+                code: 'https://github.com/yang-song/score_sde',
+                concepts: ['Continuous Time', 'Probability Flow ODE', 'Reverse SDE'],
+                summary: '将离散扩散过程推广到连续SDE框架，统一了多种扩散模型变体。',
+                contributions: [
+                    '将扩散过程推广到连续SDE框架',
+                    '提出概率流ODE的生成模型视角',
+                    '统一多种扩散模型变体'
+                ],
+                whyRead: '理解扩散模型的统一数学框架',
+                rating: 5,
+                notes: '../Notes/Score-based SDE.md'
+            },
+            'unified_2022': {
+                title: 'Understanding Diffusion Models: A Unified Perspective',
+                authors: ['Calvin Luo'],
+                venue: 'arXiv',
+                year: 2022,
+                status: 'unread',
+                priority: 'medium',
+                level: 'intermediate',
+                arxiv: 'https://arxiv.org/abs/2208.11970',
+                concepts: ['ELBO Derivation', 'Unified Notation', 'Variants Comparison'],
+                summary: '优秀的综述性工作，从统一视角理解各种扩散模型变体。',
+                contributions: [
+                    '统一多种扩散模型的数学表述',
+                    '详细推导ELBO和训练目标',
+                    '比较分析不同变体的优缺点'
+                ],
+                whyRead: '系统理解扩散模型理论的最佳综述'
+            },
+            'edm_2022': {
+                title: 'Elucidating the Design Space of Diffusion-Based Generative Models (EDM)',
+                authors: ['Tero Karras', 'Miika Aittala', 'Timo Aila', 'Samuli Laine'],
+                venue: 'NeurIPS',
+                year: 2022,
+                status: 'unread',
+                priority: 'high',
+                level: 'advanced',
+                arxiv: 'https://arxiv.org/abs/2206.00364',
+                code: 'https://github.com/NVlabs/edm',
+                concepts: ['Design Space', 'Preconditioning', 'Optimal Hyperparameters'],
+                summary: '系统性分析扩散模型设计空间的核心工作，提供了实用的超参数选择指南。',
+                contributions: [
+                    '系统分析扩散模型的设计空间',
+                    '提出预 conditioning 技术',
+                    '给出最优超参数选择建议'
+                ],
+                whyRead: '本项目的核心参考文献，理解扩散模型设计空间'
+            },
+            'guidance_2022': {
+                title: 'Classifier-Free Diffusion Guidance',
+                authors: ['Jonathan Ho', 'Tim Salimans'],
+                venue: 'NeurIPS Workshop',
+                year: 2022,
+                status: 'unread',
+                priority: 'medium',
+                level: 'intermediate',
+                arxiv: 'https://arxiv.org/abs/2207.12598',
+                concepts: ['Conditional Generation', 'Guidance Scale', 'Unconditional Training'],
+                summary: '无需额外分类器的条件生成方法，通过无分类器训练实现条件控制。',
+                contributions: [
+                    '提出无分类器引导方法',
+                    '简化条件生成流程',
+                    '提升文本到图像生成质量'
+                ],
+                whyRead: '理解现代文本到图像生成的控制机制'
+            },
+            'dpm_solver_2022': {
+                title: 'DPM-Solver: A Fast ODE Solver for Diffusion Probabilistic Model Sampling',
+                authors: ['Luping Liu', 'Yi Ren', 'Zhijie Lin', 'Zhou Zhao'],
+                venue: 'NeurIPS',
+                year: 2022,
+                status: 'unread',
+                priority: 'medium',
+                level: 'advanced',
+                arxiv: 'https://arxiv.org/abs/2206.00927',
+                concepts: ['ODE Solver', 'Exponential Integrator', 'Convergence Analysis'],
+                summary: '基于ODE理论的高效采样器，大幅减少采样步数。',
+                contributions: [
+                    '设计专门的ODE求解器',
+                    '使用指数积分器加速收敛',
+                    '理论分析采样误差界'
+                ],
+                whyRead: '理解高效采样器的设计原理'
+            },
+            'flow_matching_2023': {
+                title: 'Flow Matching for Generative Modeling',
+                authors: ['Yaron Lipman', 'Ricky T. Q. Chen', 'Ronen Yosef', 'Connectivity Labs'],
+                venue: 'ICLR',
+                year: 2023,
+                status: 'unread',
+                priority: 'medium',
+                level: 'advanced',
+                arxiv: 'https://arxiv.org/abs/2210.02747',
+                concepts: ['Flow Matching', 'Conditional Flows', 'Simulation-Free'],
+                summary: '新的训练范式，直接学习概率流，避免扩散过程的某些限制。',
+                contributions: [
+                    '提出flow matching训练方法',
+                    '避免模拟扩散过程',
+                    '单步生成的新范式'
+                ],
+                whyRead: '理解扩散模型的替代方案和未来方向'
+            },
+            'consistency_2023': {
+                title: 'Consistency Models',
+                authors: ['Yang Song', 'Prafulla Dhariwal', 'Ilya Sutskever'],
+                venue: 'ICML',
+                year: 2023,
+                status: 'unread',
+                priority: 'medium',
+                level: 'advanced',
+                arxiv: 'https://arxiv.org/abs/2303.01469',
+                concepts: ['Consistency Function', 'Self-Consistency', 'Single-Step Generation'],
+                summary: '新的生成模型范式，实现单步生成，显著提升效率。',
+                contributions: [
+                    '提出consistency models',
+                    '实现单步生成',
+                    '平衡效率与质量'
+                ],
+                whyRead: '理解生成模型的最新前沿'
+            },
+            'schrodinger_2021': {
+                title: 'Diffusion Schrödinger Bridge with Applications to Score-Based Generative Modeling',
+                authors: ['Valentin De Bortoli', 'James Thornton', 'Jeremy Heng', 'Arnaud Doucet'],
+                venue: 'NeurIPS',
+                year: 2021,
+                status: 'unread',
+                priority: 'low',
+                level: 'advanced',
+                arxiv: 'https://arxiv.org/abs/2106.01357',
+                concepts: ['Schrödinger Bridge', 'Optimal Transport', 'Entropy Regularization'],
+                summary: '将扩散模型与最优传输理论联系，提供理论分析新视角。',
+                contributions: [
+                    '建立扩散模型与最优传输的联系',
+                    '提出Schrödinger bridge视角',
+                    '为理论分析提供新工具'
+                ],
+                whyRead: '深入理解扩散模型的数学理论'
+            }
+        };
+
+        function getPaperId() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('id') || 'ddpm_2020';
+        }
+
+        function renderPaper(paperId) {
+            const paper = PAPERS[paperId];
+            if (!paper) {
+                document.getElementById('paper-content').innerHTML = '<h2>Paper not found</h2>';
+                return;
+            }
+
+            const statusClass = 'status-' + paper.status;
+            const statusText = {
+                'completed': '✅ Completed',
+                'reading': '🔄 Reading',
+                'unread': '⬜️ Unread',
+                'review': '🔁 Review'
+            }[paper.status];
+
+            const concepts = paper.concepts.map(c => `<span class="concept-tag">${c}</span>`).join('');
+
+            const links = [];
+            if (paper.arxiv) {
+                links.push(`<a href="${paper.arxiv}" target="_blank">📄 ArXiv</a>`);
+            }
+            if (paper.code) {
+                links.push(`<a href="${paper.code}" target="_blank">💻 Code</a>`);
+            }
+            if (paper.notes) {
+                links.push(`<a href="../${paper.notes}">📝 Notes</a>`);
+            }
+            links.push(`<a href="../scripts/update_status.py">🔄 Update Status</a>`);
+
+            const contributions = paper.contributions.map(c => `<li>${c}</li>`).join('');
+
+            const rating = paper.rating ? '⭐'.repeat(paper.rating) : 'Not rated';
+
+            document.title = `${paper.title} - Diffusion Models`;
+            document.getElementById('paper-content').innerHTML = `
+                <div class="back-link">
+                    <a href="../index.html">← Back to Chart</a>
+                </div>
+
+                <div class="paper-header">
+                    <h1>${paper.title}</h1>
+                    <div class="authors">
+                        ${paper.authors.join(', ')}
+                    </div>
+                    <div class="meta">
+                        <span><strong>Venue:</strong> ${paper.venue}</span>
+                        <span><strong>Year:</strong> ${paper.year}</span>
+                        <span><strong>Priority:</strong> ${paper.priority}</span>
+                        <span><strong>Difficulty:</strong> ${paper.level}</span>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                        <span style="margin-left: 15px;"><strong>Rating:</strong> ${rating}</span>
+                    </div>
+                </div>
+
+                <div class="paper-links">
+                    ${links.join('')}
+                </div>
+
+                <div class="paper-section">
+                    <h2>📖 Why Read This Paper?</h2>
+                    <p style="line-height: 1.8;">${paper.whyRead}</p>
+                </div>
+
+                <div class="paper-section">
+                    <h2>📝 Summary</h2>
+                    <p style="line-height: 1.8;">${paper.summary}</p>
+                </div>
+
+                <div class="paper-section">
+                    <h2>🔑 Key Concepts</h2>
+                    <div class="key-concepts">
+                        ${concepts}
+                    </div>
+                </div>
+
+                <div class="paper-section">
+                    <h2>💡 Key Contributions</h2>
+                    <ul style="line-height: 2;">
+                        ${contributions}
+                    </ul>
+                </div>
+
+                ${paper.notes ? `
+                <div class="notes-section">
+                    <h2>📚 Reading Notes</h2>
+                    <p>This paper has been read and annotated. Check out the detailed notes:</p>
+                    <p><a href="../${paper.notes}" style="color: #f59e0b; font-weight: bold;">→ View Reading Notes</a></p>
+                </div>
+                ` : ''}
+
+                <div class="paper-section" style="background: #f9fafb; border: 1px solid #e5e7eb;">
+                    <h2>🛠️ Tools & Resources</h2>
+                    <p>To manage this paper in your reading list:</p>
+                    <ul style="line-height: 2;">
+                        <li><strong>Update status:</strong> <code>python ../scripts/update_status.py --id ${paperId} --status completed</code></li>
+                        <li><strong>Add rating:</strong> <code>python ../scripts/update_status.py --id ${paperId} --rating 5</code></li>
+                        <li><strong>Add notes:</strong> <code>python ../scripts/update_status.py --id ${paperId} --notes_file "Notes/my_notes.md"</code></li>
+                        <li><strong>Search similar:</strong> <code>python ../scripts/search_papers.py --query "${paper.keywords || paper.title.split(' ').slice(0, 3).join(' ')}"</code></li>
+                    </ul>
+                </div>
+            `;
+        }
+
+        window.addEventListener('load', function() {
+            const paperId = getPaperId();
+            renderPaper(paperId);
+        });
+    </script>
+</head>
+
+<body>
+    <div id="paper-content">
+        <p style="text-align: center; padding: 50px;">Loading...</p>
+    </div>
+</body>
+</html>

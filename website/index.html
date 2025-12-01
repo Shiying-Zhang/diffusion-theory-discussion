@@ -1,0 +1,256 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Diffusion Models: Paper Reading Chart</title>
+    <meta name="author" content="Diego & Shiying Zhang"/>
+    <meta name="keywords" content="diffusion models, score matching, EDM, theoretical foundations, deep learning, papers"/>
+    <meta name="description" content="Interactive chart of diffusion model papers with reading progress tracking"/>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+
+    <script type="text/javascript">
+        GLOBAL_AREAS = new Array();
+        GLOBAL_WIDTH = 1;
+        myHeight = 600;
+
+        function scaleXY(elementid, scale) {
+            myscale = Math.max(0, scale);
+            oldwidth = document.getElementById(elementid).width
+            oldheight = document.getElementById(elementid).height
+            newwidth = Math.round(Math.max(oldwidth * myscale, 1));
+            newheight = Math.round(Math.max(oldheight * myscale, 1));
+            if(oldwidth == newwidth) newwidth = +1;
+            if(oldheight == newheight) newheight = +1;
+            document.getElementById(elementid).width = newwidth;
+            document.getElementById(elementid).height = newheight;
+            scaleArea();
+        }
+
+        function setXY(elementid, newwidth, newheight) {
+            document.getElementById(elementid).width = newwidth;
+            document.getElementById(elementid).height = newheight;
+            scaleArea();
+        }
+
+        function getglobal() {
+            var arrayAreas = document.body.getElementsByTagName("AREA");
+            GLOBAL_WIDTH = document.getElementById("Chart").width;
+            for(var i = 0; i < arrayAreas.length; i++) {
+                GLOBAL_AREAS[i] = arrayAreas[i].coords;
+            }
+        }
+
+        function scaleArea() {
+            var arrayAreas = document.body.getElementsByTagName("AREA");
+            for(var i = 0; i < arrayAreas.length; i++) {
+                rescale = document.getElementById("Chart").width / GLOBAL_WIDTH;
+                sarray = GLOBAL_AREAS[i].split(",");
+                var rarray = new Array();
+                for(var j = 0; j < sarray.length; j++) {
+                    rarray[j] = parseInt(sarray[j]) * rescale;
+                    rarray[j] = Math.round(rarray[j]);
+                }
+                arrayAreas[i].coords = rarray.join(",");
+            }
+        }
+
+        function getglobalplus() {
+            if(typeof(window.innerWidth) == 'number') {
+                myHeight = window.innerHeight;
+            } else {
+                myHeight = document.documentElement.clientHeight;
+            }
+            myHeight = myHeight * 0.83;
+
+            var chartImg = document.getElementById("Chart");
+            if(chartImg.complete) {
+                getglobal();
+                setPlace(1, 1);
+            } else {
+                chartImg.onload = function() {
+                    getglobal();
+                    setPlace(1, 1);
+                };
+            }
+        }
+
+        function setPlace(htLevel, wdLevel) {
+            setXY('Chart', myHeight * 1.2, myHeight);
+            divRef = document.getElementById("Charthouse");
+            divRef.scrollLeft = wdLevel * (divRef.scrollWidth - divRef.offsetWidth) / 2;
+            divRef.scrollTop = htLevel * (divRef.scrollHeight - divRef.offsetHeight) / 3;
+        }
+
+        // Show paper info
+        function showPaperInfo(paperId) {
+            window.location.href = 'papers/paper.html?id=' + paperId;
+        }
+
+        // Load stats
+        function loadStats() {
+            // This would typically fetch from a JSON file
+            // For now, we'll use placeholder data
+            document.getElementById('stat-total').textContent = '11';
+            document.getElementById('stat-completed').textContent = '3';
+            document.getElementById('stat-reading').textContent = '1';
+            document.getElementById('stat-unread').textContent = '7';
+        }
+
+        window.addEventListener('load', function() {
+            loadStats();
+            var chartImg = document.getElementById("Chart");
+            console.log("Chart loaded:", chartImg.complete);
+        });
+    </script>
+</head>
+
+<body onload="getglobalplus();">
+
+    <div id="logo">
+        <h2 style="margin: 10px; font-family: 'Georgia', serif;">📚 Papers</h2>
+    </div>
+
+    <div id="header" onclick="setPlace(2, 0);" style="cursor: pointer;">
+        <h1 style="margin-top: 15px; font-family: 'Georgia', serif; font-weight: normal;">
+            Diffusion Models: Paper Reading Chart
+        </h1>
+        <p style="margin: 5px 0 0 0; font-size: 14px; color: #666;">
+            Click on papers in the chart to view details and reading progress
+        </p>
+    </div>
+
+    <div id="chartbutton">
+        <a href="index.html"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">📊 Chart</button></a>
+    </div>
+
+    <div id="aboutbutton">
+        <a href="../paper-reading-list.md"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">📖 Reading List</button></a>
+    </div>
+
+    <div id="linksbutton">
+        <a href="../scripts/search_papers.py"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">🔍 Search</button></a>
+    </div>
+
+    <div id="contactbutton">
+        <a href="https://github.com/Shiying-Zhang/diffusion-theory-discussion/issues"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">💬 Discuss</button></a>
+    </div>
+
+    <div id="distributions">
+        <h3 style="margin: 10px; font-family: 'Georgia', serif; border-bottom: 2px solid #000;">Reading Progress</h3>
+
+        <div style="margin: 15px 10px;">
+            <div style="background: #f0f0f0; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span><strong>Total Papers</strong></span>
+                    <span id="stat-total">20</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px; color: #22c55e;">
+                    <span>✅ Completed</span>
+                    <span id="stat-completed">3</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px; color: #3b82f6;">
+                    <span>🔄 Reading</span>
+                    <span id="stat-reading">2</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: #94a3b8;">
+                    <span>⬜️ Unread</span>
+                    <span id="stat-unread">15</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin: 15px 10px;">
+            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">📚 Paper Categories</h4>
+            <ul style="list-style-type: none; padding-left: 10px; line-height: 1.8;">
+                <li><a href="#" onclick="filterPapers('foundations'); return false;">• Mathematical Foundations</a></li>
+                <li><a href="#" onclick="filterPapers('diffusion'); return false;">• Diffusion Models</a></li>
+                <li><a href="#" onclick="filterPapers('sampling'); return false;">• Fast Sampling</a></li>
+                <li><a href="#" onclick="filterPapers('applications'); return false;">• Applications</a></li>
+            </ul>
+        </div>
+
+        <div style="margin: 15px 10px;">
+            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">🎯 Quick Links</h4>
+            <ul style="list-style-type: none; padding-left: 10px; line-height: 1.8;">
+                <li><a href="../papers/database/papers.json">• 📄 Database (JSON)</a></li>
+                <li><a href="../scripts/search_papers.py">• 🔍 Search Script</a></li>
+                <li><a href="../scripts/generate_report.py">• 📊 Generate Report</a></li>
+                <li><a href="../papers/USAGE.md">• 📖 Usage Guide</a></li>
+            </ul>
+        </div>
+
+        <div style="margin: 20px 10px; padding: 10px; background-color: #f9f9f9; border: 1px solid #ccc;">
+            <p style="font-size: 12px; line-height: 1.6; font-family: 'Georgia', serif;">
+                <strong>About:</strong> Interactive chart showing diffusion model papers organized by theoretical layers. Click any paper box to view details, notes, and reading progress.
+            </p>
+            <p style="font-size: 11px; margin-top: 8px; color: #666;">
+                "Good questions guide good discussions, which in turn inspire solid work."
+            </p>
+        </div>
+    </div>
+
+    <div id="Zoomin" onclick="scaleXY('Chart', 1.2);" style="cursor: pointer;">
+        <svg width="20" height="20" viewBox="0 0 20 20">
+            <circle cx="10" cy="10" r="8" stroke="black" stroke-width="2" fill="white"/>
+            <text x="10" y="15" text-anchor="middle" font-size="16" font-weight="bold">+</text>
+        </svg>
+    </div>
+
+    <div id="Zoomout" onclick="scaleXY('Chart', 0.8);" style="cursor: pointer;">
+        <svg width="20" height="20" viewBox="0 0 20 20">
+            <circle cx="10" cy="10" r="8" stroke="black" stroke-width="2" fill="white"/>
+            <text x="10" y="14" text-anchor="middle" font-size="16" font-weight="bold">-</text>
+        </svg>
+    </div>
+
+    <div id="Charthouse">
+        <img id="Chart" src="diffusion-theory-chart.svg" usemap="#chartmap" alt="Diffusion Theory Papers Chart"
+             onerror="this.style.display='none'; document.getElementById('chartError').style.display='block';" />
+
+        <div id="chartError" style="display: none; padding: 40px; text-align: center; font-family: Georgia, serif;">
+            <h2>Paper Chart</h2>
+            <p style="color: #666; margin: 20px 0;">
+                The interactive chart visualization is currently being loaded.<br>
+                Please refer to the <a href="../paper-reading-list.md" style="color: #000080;">Paper Reading List</a> for detailed content.
+            </p>
+        </div>
+
+        <map name="chartmap">
+            <!-- Mathematical Foundations Layer -->
+            <area shape="rect" coords="100,170,350,280" href="papers/paper.html?id=score_matching_2005" alt="Score Matching" title="Score Matching (Hyvärinen, 2005)">
+            <area shape="rect" coords="400,170,650,280" href="papers/paper.html?id=denoising_2011" alt="Denoising Score Matching" title="Denoising Score Matching (Vincent, 2011)">
+            <area shape="rect" coords="700,170,950,280" href="papers/paper.html?id=ncsn_2019" alt="NCSN" title="NCSN (Song & Ermon, 2019)">
+            <area shape="rect" coords="1000,170,1250,280" href="papers/paper.html?id=thermodynamics_2015" alt="Thermodynamics" title="Thermodynamic Inspiration (Sohl-Dickstein, 2015)">
+
+            <!-- Core Model Variants -->
+            <area shape="rect" coords="100,390,300,560" href="papers/paper.html?id=ddpm_2020" alt="DDPM" title="DDPM (Ho et al., 2020) - Core Paper ⭐">
+            <area shape="rect" coords="350,390,550,560" href="papers/paper.html?id=improved_ddpm_2021" alt="Improved DDPM" title="Improved DDPM (Nichol & Dhariwal, 2021)">
+            <area shape="rect" coords="600,390,800,560" href="papers/paper.html?id=ddim_2020" alt="DDIM" title="DDIM (Song et al., 2020)">
+            <area shape="rect" coords="850,390,1050,560" href="papers/paper.html?id=score_sde_2021" alt="Score-Based SDE" title="Score-Based SDE (Song et al., 2021)">
+            <area shape="rect" coords="1100,390,1300,560" href="papers/paper.html?id=unified_2022" alt="Unified Perspective" title="Understanding Diffusion Models (Luo, 2022)">
+
+            <!-- Unified Framework -->
+            <area shape="rect" coords="450,670,950,760" href="papers/paper.html?id=edm_2022" alt="EDM" title="EDM Framework (Karras et al., 2022) - Core Framework ⭐⭐">
+
+            <!-- Advanced Topics -->
+            <area shape="rect" coords="100,850,300,940" href="papers/paper.html?id=guidance_2022" alt="Classifier-Free Guidance" title="Classifier-Free Guidance (Ho & Salimans, 2022)">
+            <area shape="rect" coords="350,850,550,940" href="papers/paper.html?id=dpm_solver_2022" alt="DPM-Solver" title="DPM-Solver (Lu et al., 2022)">
+            <area shape="rect" coords="600,850,800,940" href="papers/paper.html?id=flow_matching_2023" alt="Flow Matching" title="Flow Matching (Lipman et al., 2023)">
+            <area shape="rect" coords="850,850,1050,940" href="papers/paper.html?id=consistency_2023" alt="Consistency Models" title="Consistency Models (Song et al., 2023)">
+            <area shape="rect" coords="1100,850,1300,940" href="papers/paper.html?id=schrodinger_2021" alt="Schrödinger Bridge" title="Schrödinger Bridge (De Bortoli et al., 2021)">
+        </map>
+    </div>
+
+    <div id="info" style="display: none;">
+        <div id="infoContent" style="padding: 15px; font-family: 'Georgia', serif; font-size: 13px;">
+            Click on papers in the chart to see details.
+        </div>
+    </div>
+
+    <script>
+        function filterPapers(category) {
+            alert('Filtering by: ' + category + '\n\nUse the search script:\n python ../scripts/search_papers.py --topic ' + category);
+        }
+    </script>
+
+</body>
+</html>
