@@ -57,7 +57,7 @@ D_{KL}(q(x_0)\|p_\theta(x_0))=\mathbb{E}_{q(x_0)}[-\log p_\theta(x_0)]+C,
 $$
 其中$C=\mathbb{E}_{q(x_0)}[\log q(x_0)]$与$\theta$无关。
 
-> Recall：$p(x)$和$q(x)$的KL散度定义为$D_{KL}(p||q)=\mathbb{E}_q\left[-\dfrac{\log p(x)}{\log q(x)}\right]$测量了两个概率分布之间的距离。
+> Recall：$p(x)$和$q(x)$的KL散度定义为$D_{KL}(q\|p)=\mathbb{E}_q\left[-\log \dfrac{p(x)}{q(x)}\right]$测量了在真实分布$q$时使用近似分布$p$带来的额外惊喜。
 
 对$\log$函数使用Jenson不等式，因为
 $$
@@ -75,7 +75,7 @@ L=\mathbb{E}_q\left[D_{KL}(q(x_T|x_0)\|p(x_T))+\sum_{t=1}^{T-1}D_{KL}(q(x_t|x_{t
 $$
 为了方便，记$L_t=\mathbb{E}_q[D_{KL}(q(x_t|x_{t+1},x_0)||p_\theta(x_t|x_{t+1}))]$，我们有表达式
 $$
-q(x_t\|x_{t+1},x_0)\sim N\left(\dfrac{\sqrt{\bar{\alpha}_t}\beta_{t+1}}{1-\bar{\alpha}_{t+1}}x_0+\dfrac{\sqrt{\alpha_{t+1}}(1-\bar{\alpha}_t)}{1-\bar{\alpha}_{t+1}}x_{t+1},\dfrac{1-\bar{\alpha}_t}{1-\bar{\alpha}_{t+1}}\beta_{t+1}I\right)
+q(x_t|x_{t+1},x_0)\sim N\left(\dfrac{\sqrt{\bar{\alpha}_t}\beta_{t+1}}{1-\bar{\alpha}_{t+1}}x_0+\dfrac{\sqrt{\alpha_{t+1}}(1-\bar{\alpha}_t)}{1-\bar{\alpha}_{t+1}}x_{t+1},\dfrac{1-\bar{\alpha}_t}{1-\bar{\alpha}_{t+1}}\beta_{t+1}I\right)
 $$
 
 > $t$越大，受到$x_{t+1}$影响越大；反之，$x_0$.
@@ -107,5 +107,17 @@ $$
 $$
 即可。此时，Loss化简为
 $$
-L_{t-1}=\mathbb{E}_{x_0,\epsilon}\left[\|\epsilon - \epsilon_\theta(\sqrt{\bar{\alpha}_t}x_0 + \sqrt{1-\bar{\alpha}_t}\epsilon, t)\|^2\right].
+L_{t-1}=\mathbb{E}_{q(x_0),\epsilon}\left[\|\epsilon - \epsilon_\theta(\sqrt{\bar{\alpha}_t}x_0 + \sqrt{1-\bar{\alpha}_t}\epsilon, t)\|^2\right].
 $$
+
+### Score
+
+和直观相符，这个$-\epsilon$正好就是概率分布$q(x_t|x_0)$的Score（差一个常数倍）。
+
+> Recall：一个概率分布$p(x)$的Score定义为$\nabla_x p(x)$.
+
+**定理：**在Loss的表达式中，
+$$
+\nabla_{x_t}q(x_t|x_0)=-\frac{\epsilon}{\sqrt{1-\bar{\alpha}_t}}
+$$
+这是一个直接的Gauss变量密度函数的计算。所以训练每个$L_{t-1}$的过程实际上就是一个梯度下降。

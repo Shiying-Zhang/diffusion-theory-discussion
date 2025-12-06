@@ -1,4 +1,4 @@
-# Score-Based Generative Modeling through Stochastic Diffusion Equations(Score-Based SDE)
+# Score-Based Generative Modeling through Stochastic Diffusion Equations (Score-Based SDE)
 
 Author: Zichang Wang
 
@@ -8,19 +8,37 @@ Author: Zichang Wang
 
 样本分布函数$q(x_0)$，是我们还原的目标。
 
-$T$为前向过程（以及反向过程）的总步数。
+模型对Score作出的近似记为$s_\theta(x_t,t)$，和DDPM文章中的$\epsilon_\theta(x_t,t)$的关系为
+$$
+s_\theta(x_t,t)=-\frac{\epsilon_\theta(x_t,t)}{\sqrt{1-\bar{\alpha}_t}}.
+$$
+参数（这里继承DDPM文章中的参数定义）：
 
-前向过程$q(x_t|x_{t-1})$.
-
-反向过程$p_\theta(x_{t-1}|x_t)$，其中$\theta$为模型参数。
-
-参数：
-
-- $\alpha_t$为一列略小于$1$的参数
+- $\alpha_t$为一列略小于$1$的参数（并非本篇文章中的$\alpha_t$）
 - $\beta_t = 1 - \alpha_t$为一列略大于$0$的参数
-- $\bar{\alpha}_t = \prod_{i=1}^t \alpha_i$为累计衰减，希望$t=T$时接近$0$
+- $\bar{\alpha}_t = \prod_{i=1}^t \alpha_i$为累计衰减，希望$t=T$时接近$0$（是本篇文章中的$\alpha_t$）
 
-## 前向过程
+## SDE
+
+这篇文章陈述的第一件事是：无论是SMLD还是DDPM都是如下SDE框架的离散化。
+
+正向过程是一个$\mathbb{R}^n$中的Markov过程$X=\{X_t\}_{t=0}^{T}$，初始分布为$X_0\sim q(x_0)$，且满足扩散方程
+$$
+{\rm d}X_t=f(X_t,t){\rm d}t+g(t){\rm d}W_t,
+$$
+其中$W_t$是 $n$维标准布朗运动，$f,g$为正则性足够好的函数。
+
+所有形如这样的过程，被称为扩散过程。
+
+**定理(Anderson，扩散过程的可逆性)：**对于上述扩散过程$X$，如下定义的扩散过程$Y=\{Y_t\}_{t=0}^{T}$和$X$同分布：
+
+取初始分布为$Y_T\sim X_T$，扩散方程为
+$$
+{\rm d}Y_t=\left[f(X_t,t)-g(t)^2\nabla_x \log p_t(x)\right]{\rm d}t+g(t){\rm d}\bar{W}_t,
+$$
+其中$p_t(x)$是$X_t$的密度函数，$\bar{W}_t$是反向时间布朗运动。
+
+
 
 Markov链，每一步转移概率为$q(x_t|x_{t-1})\sim N(\sqrt{1-\beta_t}x_{t-1},\beta_t I)$. 这等价于：
 $$
@@ -43,7 +61,6 @@ $$
 ## 反向过程
 
 ### 形态假设
-
 我们要求反向过程也是一个Markov链，但需要学习：
 
 $$
@@ -51,13 +68,14 @@ p_\theta(x_{t-1}|x_t) = \mathcal{N}(x_{t-1}; \mu_\theta(x_t, t), \Sigma_\theta(x
 $$
 
 ### Loss
-
 我们希望minimize最终的输出分布$p_\theta(x_0)$和真实分布$q(x_0)$之间的KL散度：
 
 $$
-D_{KL}(p_\theta(x_0)||q(x_0))=\mathbb{E}_{q(x_0)}[-\log p_\theta(x_0)]+C,
+D_{KL}(q(x_0)\|p_\theta(x_0))=\mathbb{E}_{q(x_0)}[-\log p_\theta(x_0)]+C,
 $$
 其中$C=\mathbb{E}_{q(x_0)}[\log q(x_0)]$与$\theta$无关。
+
+> Recall：$p(x)$和$q(x)$的KL散度定义为$D_{KL}(q\|p)=\mathbb{E}_q\left[-\log \dfrac{p(x)}{q(x)}\right]$测量了在真实分布$q$时使用近似分布$p$带来的额外惊喜。
 
 对$\log$函数使用Jenson不等式，因为
 $$
@@ -71,44 +89,41 @@ $$
 
 事实上，$L$可以化简为
 $$
-L=\mathbb{E}_q\left[D_{KL}(q(x_T|x_0)||p(x_T))+\sum_{t=1}^{T-1}D_{KL}(q(x_t|x_{t+1},x_0)||p_\theta(x_t|x_{t+1}))-\log p_\theta(x_0|x_1)\right],
+L=\mathbb{E}_q\left[D_{KL}(q(x_T|x_0)\|p(x_T))+\sum_{t=1}^{T-1}D_{KL}(q(x_t|x_{t+1},x_0)\|p_\theta(x_t|x_{t+1}))-\log p_\theta(x_0|x_1)\right],
 $$
-为了方便我们
-
-## 实际训练Loss
-
-### 训练目标推导
-
-从$L_t$的表达式出发，其中真实后验均值为：
-
-$$\tilde{\mu}_t(x_t, x_0) = \frac{\sqrt{\bar{\alpha}_{t-1}}\beta_t}{1-\bar{\alpha}_t}x_0 + \frac{\sqrt{\alpha_t}(1-\bar{\alpha}_{t-1})}{1-\bar{\alpha}_t}x_t$$
-
-将$x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1-\bar{\alpha}_t}\epsilon$代入，可以重写为：
-
-$$\tilde{\mu}_t = \frac{1}{\sqrt{\alpha_t}}\left(x_t - \frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}}\epsilon\right)$$
-
-因此，如果我们让模型预测噪声$\epsilon$，可以设定：
-
-$$\mu_\theta(x_t, t) = \frac{1}{\sqrt{\alpha_t}}\left(x_t - \frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}}\epsilon_\theta(x_t, t)\right)$$
-
-最终训练目标简化为：
-
-$$L_{simple} = \mathbb{E}_{t,x_0,\epsilon}\left[\|\epsilon - \epsilon_\theta(\sqrt{\bar{\alpha}_t}x_0 + \sqrt{1-\bar{\alpha}_t}\epsilon, t)\|^2\right]$$
-
-**核心思想**：模型$\epsilon_\theta$学习预测添加到数据中的噪声$\epsilon$。
-
-
-
-
-### 速度
-
-使用Numpy，大约每秒可以生成$10^6$量级的一维正态随机变量。则使用DDPM生成一张$32\times 32$的图片大约需要
+为了方便，记$L_t=\mathbb{E}_q[D_{KL}(q(x_t|x_{t+1},x_0)||p_\theta(x_t|x_{t+1}))]$，我们有表达式
 $$
-32\times 32\times 1000\div 10^6 = 1
+q(x_t\|x_{t+1},x_0)\sim N\left(\dfrac{\sqrt{\bar{\alpha}_t}\beta_{t+1}}{1-\bar{\alpha}_{t+1}}x_0+\dfrac{\sqrt{\alpha_{t+1}}(1-\bar{\alpha}_t)}{1-\bar{\alpha}_{t+1}}x_{t+1},\dfrac{1-\bar{\alpha}_t}{1-\bar{\alpha}_{t+1}}\beta_{t+1}I\right)
 $$
-秒（不加声明，等号指左右两侧具有相同数量级）。
 
-？？？
+> $t$越大，受到$x_{t+1}$影响越大；反之，$x_0$.
 
-关键：所有的步骤需要迭代处理而非并行，所以时间较慢。
+**定理：**两个高斯分布$Q\sim N(\mu_1,\sigma_1)$, $P\sim N(\mu_2,\sigma_2)$的KL散度为
+$$
+D_{KL}(Q \| P) = \frac{1}{2} \left[ \log \left( \frac{\sigma_2^2}{\sigma_1^2} \right) + \frac{\sigma_1^2}{\sigma_2^2} + \frac{(\mu_1 - \mu_2)^2}{\sigma_2^2} - 1 \right]
+$$
 
+这个表达式告诉我们，如果我们不控制模型方差，那么取一个非常大的方差$\sigma_2$对模型来说是一个Loss很小的退化解，我们不希望这种事情发生。所以我们需要归一化模型方差进行训练。
+
+### 实际训练Loss
+
+于是我们取定，$\Sigma_\theta(x_t, t)=\sigma_t^2I$，$\sigma_t\sim\beta_t$为同量级固定常数。
+
+则
+$$
+L_{t-1}=\mathbb{E}_q\left[\frac{1}{2\sigma_t^2}\left\|\tilde{\mu}_t(x_t,x_0)-\mu_\theta(x_t,t)\right\|^2\right]+C,
+$$
+其中$\tilde{\mu}_t(x_t, x_0) = \frac{\sqrt{\bar{\alpha}_{t-1}}\beta_t}{1-\bar{\alpha}_t}x_0 + \frac{\sqrt{\alpha_t}(1-\bar{\alpha}_{t-1})}{1-\bar{\alpha}_t}x_t$为后验均值。
+
+为了摆脱期望的复杂下标$q$，我们做恒等变形
+$$
+x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1-\bar{\alpha}_t}\epsilon,
+$$
+其中$\epsilon\sim N(0,1)$为独立正态变量，我们改为让模型预测$\epsilon_\theta(x_t,t)$，最后取
+$$
+\mu_\theta(x_t, t) = \frac{1}{\sqrt{\alpha_t}}\left(x_t - \frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}}\epsilon_\theta(x_t, t)\right)
+$$
+即可。此时，Loss化简为
+$$
+L_{t-1}=\mathbb{E}_{q(x_0),\epsilon}\left[\|\epsilon - \epsilon_\theta(\sqrt{\bar{\alpha}_t}x_0 + \sqrt{1-\bar{\alpha}_t}\epsilon, t)\|^2\right].
+$$
