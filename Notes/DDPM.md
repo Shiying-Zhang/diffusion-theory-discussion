@@ -121,3 +121,5 @@ $$
 \nabla_{x_t}q(x_t|x_0)=-\frac{\epsilon}{\sqrt{1-\bar{\alpha}_t}}
 $$
 这是一个直接的Gauss变量密度函数的计算。所以训练每个$L_{t-1}$的过程实际上就是一个梯度下降。
+
+关于更多Score的Motivation，可以参考Yang Song写过的非常详细的一篇[blog](https://yang-song.net/blog/2021/score/)。
