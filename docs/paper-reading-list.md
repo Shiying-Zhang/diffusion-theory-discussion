@@ -214,7 +214,7 @@
 
 1. **选择合适的路径**：根据你的背景选择 Foundation、Theory 或 Advanced 路径
 2. **主动提问**：阅读过程中的困惑请在我们的 [Issues](https://github.com/Shiying-Zhang/diffusion-theory-discussion/issues) 中提出
-3. **做笔记**：考虑在 `Notes/` 文件夹中记录你的理解和疑问
+3. **做笔记**：考虑在 `notes/` 文件夹中记录你的理解和疑问
 4. **参与讨论**：欢迎在相关问题讨论中分享你的见解
 
 ---

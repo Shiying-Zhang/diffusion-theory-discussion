@@ -11,17 +11,15 @@ import argparse
 from datetime import datetime
 from typing import List, Dict, Any, Optional
 
-VALID_STATUS = ['unread', 'reading', 'completed', 'review']
-VALID_LEVELS = ['beginner', 'intermediate', 'advanced']
-VALID_PRIORITIES = ['high', 'medium', 'low']
+from constants import VALID_STATUS, VALID_LEVELS, VALID_PRIORITIES, DB_PATH
 
-def load_papers(database_path: str = "papers/database/papers.json") -> Dict[str, Any]:
+def load_papers(database_path: str = DB_PATH) -> Dict[str, Any]:
     """加载论文数据库"""
     with open(database_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
     return data
 
-def save_papers(data: Dict[str, Any], database_path: str = "papers/database/papers.json"):
+def save_papers(data: Dict[str, Any], database_path: str = DB_PATH):
     """保存论文数据库"""
     data['last_updated'] = datetime.now().strftime('%Y-%m-%d')
 

@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📊 Interactive Theory Chart - Diffusion Models</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Interactive Theory Chart - Diffusion Models</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
         .chart-page {
             position: absolute;
@@ -12,113 +13,44 @@
             top: 14%;
             width: 74%;
             height: 83%;
-            overflow: auto;
+            overflow: hidden;
             background: white;
             padding: 0;
         }
 
-        .chart-container {
+        #chart-container {
             width: 100%;
             height: 100%;
             position: relative;
-        }
-
-        .svg-container {
-            width: 100%;
-            height: 100%;
-            display: block;
             background: #fafafa;
         }
 
         /* Paper nodes styling */
         .paper-node {
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: opacity 0.3s ease;
         }
 
         .paper-node circle {
-            transition: all 0.3s ease;
+            transition: stroke 0.3s ease, stroke-width 0.3s ease;
         }
 
         .paper-node text {
-            transition: all 0.3s ease;
             pointer-events: none;
-        }
-
-        .paper-node .subtitle {
-            font-size: 11px;
-            fill: #666;
-        }
-
-        .paper-node .year {
-            font-size: 10px;
-            fill: #888;
         }
 
         /* Connection lines */
         .connection-line {
-            stroke: #cbd5e1;
-            stroke-width: 2;
-            opacity: 0.6;
-            transition: all 0.3s ease;
-        }
-
-        /* Highlight states */
-        .highlighted {
-            opacity: 1 !important;
-            stroke-width: 3 !important;
-        }
-
-        .dimmed {
-            opacity: 0.15 !important;
-        }
-
-        .active {
-            opacity: 1 !important;
-            stroke: #667eea !important;
-            stroke-width: 4 !important;
+            transition: stroke 0.3s ease, opacity 0.3s ease;
         }
 
         /* Variables section */
-        .variables-section {
-            background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
-            border-top: 3px solid #667eea;
-        }
-
-        .variables-title {
-            font-size: 18px;
-            font-weight: bold;
-            fill: #1e293b;
-        }
-
-        .variable-item {
+        .var-item {
             cursor: pointer;
-            transition: all 0.3s ease;
         }
 
-        .variable-item:hover rect {
-            fill: #e0e7ff !important;
-            stroke: #667eea !important;
-            stroke-width: 2;
-        }
-
-        .variable-item .var-name {
-            font-size: 14px;
-            font-weight: bold;
-            fill: #1e293b;
-        }
-
-        .variable-item .var-def {
-            font-size: 11px;
-            fill: #475569;
-        }
-
-        /* Variable relationships */
-        .variable-arrow {
-            stroke: #94a3b8;
-            stroke-width: 1.5;
-            fill: none;
-            opacity: 0.5;
+        .var-item rect {
+            transition: fill 0.2s ease, stroke 0.2s ease;
         }
 
         .legend {
@@ -130,6 +62,7 @@
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             font-size: 12px;
+            z-index: 10;
         }
 
         .legend h4 {
@@ -161,13 +94,13 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             font-size: 14px;
             color: #475569;
+            z-index: 10;
         }
 
         .instruction strong {
             color: #1e293b;
         }
 
-        /* Notes link */
         .notes-link {
             position: absolute;
             top: 20px;
@@ -180,22 +113,33 @@
             font-weight: bold;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             transition: all 0.2s;
+            z-index: 10;
         }
 
         .notes-link:hover {
             background: #38a169;
             transform: translateY(-2px);
+            color: white;
         }
 
         .notes-link svg {
             margin-right: 8px;
             vertical-align: middle;
         }
+
+        #paper-detail {
+            display: none;
+            margin: 15px 10px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        }
     </style>
 </head>
 <body>
     <div id="logo">
-        <h2 style="margin: 10px; font-family: 'Georgia', serif;">📊 Chart</h2>
+        <h2 style="margin: 10px; font-family: 'Georgia', serif;">Chart</h2>
     </div>
 
     <div id="header">
@@ -208,58 +152,62 @@
     </div>
 
     <div id="chartbutton">
-        <a href="interactive.html"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px; background: #e0e7ff;">📊 Interactive Chart</button></a>
+        <a href="interactive.html"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px; background: #e0e7ff;">Interactive Chart</button></a>
     </div>
 
     <div id="aboutbutton">
-        <a href="papers.html"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">📖 Papers</button></a>
+        <a href="papers.html"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">Papers</button></a>
     </div>
 
     <div id="linksbutton">
-        <a href="issues.html"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">💬 Issues</button></a>
+        <a href="playground.html"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">Playground</button></a>
     </div>
 
     <div id="contactbutton">
-        <a href="https://github.com/Shiying-Zhang/diffusion-theory-discussion" target="_blank"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">⭐ GitHub</button></a>
+        <a href="https://github.com/Shiying-Zhang/diffusion-theory-discussion" target="_blank"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">GitHub</button></a>
     </div>
 
     <div id="distributions">
         <h3 style="margin: 10px; font-family: 'Georgia', serif; border-bottom: 2px solid #000;">Navigation</h3>
 
         <div style="margin: 15px 10px;">
-            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">📚 Quick Access</h4>
+            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">Quick Access</h4>
             <ul style="list-style-type: none; padding-left: 10px; line-height: 1.8;">
-                <li><a href="../Notes/DDPM.md">• 📄 DDPM Notes</a></li>
-                <li><a href="../Notes/Score-based SDE.md">• 📄 Score SDE Notes</a></li>
-                <li><a href="papers.html">• 📖 All Papers</a></li>
+                <li><a href="papers.html">All Papers</a></li>
             </ul>
         </div>
 
         <div style="margin: 15px 10px;">
-            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">🎯 Chart Types</h4>
-            <ul style="list-style-type: none; padding-left: 10px; line-height: 1.8;">
-                <li><a href="index.html">• Simple SVG Chart</a></li>
-                <li><strong>• Interactive Network ⭐</strong></li>
+            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">Reading Notes</h4>
+            <ul id="notes-list" style="list-style-type: none; padding-left: 10px; line-height: 1.8;">
+                <li style="color:#999;">Loading...</li>
             </ul>
         </div>
 
         <div style="margin: 15px 10px;">
-            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">🛠️ Tools</h4>
+            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">Chart Types</h4>
             <ul style="list-style-type: none; padding-left: 10px; line-height: 1.8;">
-                <li><a href="../scripts/search_papers.py">• 🔍 Search Papers</a></li>
-                <li><a href="../scripts/generate_report.py">• 📊 Generate Report</a></li>
+                <li><a href="index.html">Simple Chart</a></li>
+                <li><strong>Interactive Network</strong></li>
             </ul>
         </div>
+
+        <div style="margin: 15px 10px;">
+            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">Papers by Category</h4>
+            <div id="nav-list"></div>
+        </div>
+
+        <div id="paper-detail"></div>
 
         <div style="margin: 20px 10px; padding: 10px; background-color: #f9f9f9; border: 1px solid #ccc;">
             <p style="font-size: 12px; line-height: 1.6; font-family: 'Georgia', serif;">
-                <strong>Interactive Chart:</strong> Hover over papers to explore connections. Variables section shows key concepts.
+                <strong>Interactive Chart:</strong> Hover over papers to explore connections. Drag nodes to rearrange. Scroll to zoom.
             </p>
         </div>
     </div>
 
     <div class="chart-page">
-        <a href="../Notes/" class="notes-link">
+        <a href="../notes/" class="notes-link">
             <svg width="16" height="16" viewBox="0 0 16 16" style="fill: currentColor;">
                 <path d="M6 2h5l1 1h3v11H4V3h2z"/>
                 <path d="M6 4v1h4V4H6z"/>
@@ -267,337 +215,50 @@
             View Notes
         </a>
 
-        <div class="legend">
-            <h4>Legend</h4>
-            <div class="legend-item">
-                <div class="legend-color" style="background: #fffacd;"></div>
-                <span>Core Papers (DDPM)</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color" style="background: #d4f4dd;"></div>
-                <span>Extensions</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color" style="background: #dbeafe;"></div>
-                <span>Theoretical</span>
-            </div>
-        </div>
+        <div class="legend" id="chart-legend"></div>
 
         <div class="instruction">
-            <strong>💡 How to use:</strong><br>
-            • Hover over papers to highlight connections<br>
-            • Variables show diffusion theory concepts<br>
-            • Click papers to view details
+            <strong>How to use:</strong><br>
+            Hover papers to highlight connections<br>
+            Drag nodes to rearrange layout<br>
+            Scroll to zoom, click for details
         </div>
 
-        <div class="chart-container">
-            <svg class="svg-container" viewBox="0 0 1400 1000" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                        <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8" />
-                    </marker>
-                    <style>
-                        @keyframes pulse {
-                            0%, 100% { opacity: 1; }
-                            50% { opacity: 0.5; }
-                        }
-                    </style>
-                </defs>
-
-                <!-- Papers Network Section (Top 70%) -->
-                <g id="papers-section">
-                    <text x="700" y="35" text-anchor="middle" font-size="24" font-weight="bold" fill="#1e293b">
-                        Diffusion Model Papers Network
-                    </text>
-                    <text x="700" y="60" text-anchor="middle" font-size="14" fill="#64748b">
-                        Hover over papers to explore theoretical connections
-                    </text>
-
-                    <!-- Connections (drawn first so they appear behind nodes) -->
-                    <!-- Score Matching to Denoising -->
-                    <line class="connection-line" data-from="score_matching" data-to="denoising"
-                          x1="245" y1="120" x2="355" y2="120"/>
-
-                    <!-- Score Matching to NCSN -->
-                    <line class="connection-line" data-from="score_matching" data-to="ncsn"
-                          x1="245" y1="120" x2="555" y2="120"/>
-
-                    <!-- Denoising to DDPM -->
-                    <line class="connection-line" data-from="denoising" data-to="ddpm"
-                          x1="400" y1="165" x2="200" y2="240"/>
-
-                    <!-- Thermodynamics to DDPM -->
-                    <line class="connection-line" data-from="thermodynamics" data-to="ddpm"
-                          x1="1000" y1="165" x2="260" y2="300"/>
-
-                    <!-- NCSN to Score SDE -->
-                    <line class="connection-line" data-from="ncsn" data-to="score_sde"
-                          x1="600" y1="165" x2="600" y2="240"/>
-
-                    <!-- DDPM to EDM -->
-                    <line class="connection-line" data-from="ddpm" data-to="edm"
-                          x1="240" y1="300" x2="620" y2="420"/>
-
-                    <!-- DDPM to DDIM -->
-                    <line class="connection-line" data-from="ddpm" data-to="ddim"
-                          x1="260" y1="340" x2="555" y2="400"/>
-
-                    <!-- DDPM to Improved -->
-                    <line class="connection-line" data-from="ddpm" data-to="improved"
-                          x1="200" y1="360" x2="200" y2="455"/>
-
-                    <!-- Score SDE to EDM -->
-                    <line class="connection-line" data-from="score_sde" data-to="edm"
-                          x1="660" y1="340" x2="780" y2="420"/>
-
-                    <!-- Paper Nodes -->
-                    <!-- Foundational Papers -->
-                    <g class="paper-node" data-id="score_matching" onmouseover="handleHover('score_matching', true)" onmouseout="handleHover('score_matching', false)">
-                        <circle cx="200" cy="120" r="45" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
-                        <text x="200" y="115" text-anchor="middle" font-size="12" font-weight="bold">Score</text>
-                        <text x="200" y="128" text-anchor="middle" font-size="12" font-weight="bold">Matching</text>
-                        <text x="200" y="140" text-anchor="middle" class="year">2005</text>
-                    </g>
-
-                    <g class="paper-node" data-id="denoising" onmouseover="handleHover('denoising', true)" onmouseout="handleHover('denoising', false)">
-                        <circle cx="400" cy="120" r="45" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
-                        <text x="400" y="115" text-anchor="middle" font-size="11" font-weight="bold">Denoising</text>
-                        <text x="400" y="128" text-anchor="middle" font-size="11" font-weight="bold">Score Match</text>
-                        <text x="400" y="140" text-anchor="middle" class="year">2011</text>
-                    </g>
-
-                    <g class="paper-node" data-id="thermodynamics" onmouseover="handleHover('thermodynamics', true)" onmouseout="handleHover('thermodynamics', false)">
-                        <circle cx="1000" cy="120" r="45" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
-                        <text x="1000" y="115" text-anchor="middle" font-size="11" font-weight="bold">Thermo-</text>
-                        <text x="1000" y="128" text-anchor="middle" font-size="11" font-weight="bold">dynamics</text>
-                        <text x="1000" y="140" text-anchor="middle" class="year">2015</text>
-                    </g>
-
-                    <g class="paper-node" data-id="ncsn" onmouseover="handleHover('ncsn', true)" onmouseout="handleHover('ncsn', false)">
-                        <circle cx="600" cy="120" r="45" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
-                        <text x="600" y="115" text-anchor="middle" font-size="12" font-weight="bold">NCSN</text>
-                        <text x="600" y="128" text-anchor="middle" font-size="11" font-weight="bold">Score-Based</text>
-                        <text x="600" y="140" text-anchor="middle" class="year">2019</text>
-                    </g>
-
-                    <!-- Core Papers -->
-                    <g class="paper-node" data-id="ddpm" onmouseover="handleHover('ddpm', true)" onmouseout="handleHover('ddpm', false)">
-                        <circle cx="200" cy="300" r="60" fill="#fffacd" stroke="#d97706" stroke-width="4"/>
-                        <text x="200" y="295" text-anchor="middle" font-size="14" font-weight="bold">DDPM</text>
-                        <text x="200" y="310" text-anchor="middle" class="subtitle">Diffusion</text>
-                        <text x="200" y="322" text-anchor="middle" class="year">2020</text>
-                    </g>
-
-                    <g class="paper-node" data-id="score_sde" onmouseover="handleHover('score_sde', true)" onmouseout="handleHover('score_sde', false)">
-                        <circle cx="600" cy="300" r="60" fill="#d4f4dd" stroke="#48bb78" stroke-width="3"/>
-                        <text x="600" y="295" text-anchor="middle" font-size="12" font-weight="bold">Score SDE</text>
-                        <text x="600" y="310" text-anchor="middle" class="subtitle">Continuous</text>
-                        <text x="600" y="322" text-anchor="middle" class="year">2021</text>
-                    </g>
-
-                    <!-- Extensions -->
-                    <g class="paper-node" data-id="improved" onmouseover="handleHover('improved', true)" onmouseout="handleHover('improved', false)">
-                        <circle cx="200" cy="500" r="45" fill="#f3e8ff" stroke="#a855f7" stroke-width="2"/>
-                        <text x="200" y="495" text-anchor="middle" font-size="11" font-weight="bold">Improved</text>
-                        <text x="200" y="508" text-anchor="middle" font-size="11" font-weight="bold">DDPM</text>
-                        <text x="200" y="520" text-anchor="middle" class="year">2021</text>
-                    </g>
-
-                    <g class="paper-node" data-id="ddim" onmouseover="handleHover('ddim', true)" onmouseout="handleHover('ddim', false)">
-                        <circle cx="600" cy="400" r="45" fill="#f3e8ff" stroke="#a855f7" stroke-width="2"/>
-                        <text x="600" y="395" text-anchor="middle" font-size="12" font-weight="bold">DDIM</text>
-                        <text x="600" y="408" text-anchor="middle" class="subtitle">Fast Sample</text>
-                        <text x="600" y="420" text-anchor="middle" class="year">2020</text>
-                    </g>
-
-                    <!-- Unified Framework -->
-                    <g class="paper-node" data-id="edm" onmouseover="handleHover('edm', true)" onmouseout="handleHover('edm', false)" onclick="window.open('papers/paper.html?id=edm_2022', '_blank')">
-                        <rect x="620" y="420" width="160" height="80" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="4"/>
-                        <text x="700" y="445" text-anchor="middle" font-size="16" font-weight="bold">EDM</text>
-                        <text x="700" y="465" text-anchor="middle" font-size="12">Unified</text>
-                        <text x="700" y="478" text-anchor="middle" font-size="12">Framework</text>
-                        <text x="700" y="492" text-anchor="middle" class="year">2022</text>
-                    </g>
-                </g>
-
-                <!-- Variables Section (Bottom 30%) -->
-                <g id="variables-section" class="variables-section">
-                    <text x="700" y="690" text-anchor="middle" class="variables-title">
-                        Diffusion Theory: Key Variables & Definitions
-                    </text>
-
-                    <!-- Core Variables -->
-                    <g class="variable-item" data-var="x0" onmouseover="highlightVar('x0')" onmouseout="unhighlightVar()">
-                        <rect x="100" y="720" width="250" height="70" rx="8" fill="white" stroke="#cbd5e1" stroke-width="2"/>
-                        <text x="225" y="750" text-anchor="middle" class="var-name">$x_0$</text>
-                        <text x="225" y="770" text-anchor="middle" class="var-def">Original clean data</text>
-                    </g>
-
-                    <g class="variable-item" data-var="xt" onmouseover="highlightVar('xt')" onmouseout="unhighlightVar()">
-                        <rect x="400" y="720" width="250" height="70" rx="8" fill="white" stroke="#cbd5e1" stroke-width="2"/>
-                        <text x="525" y="750" text-anchor="middle" class="var-name">$x_t$</text>
-                        <text x="525" y="770" text-anchor="middle" class="var-def">Noisy data at timestep t</text>
-                    </g>
-
-                    <g class="variable-item" data-var="epsilon" onmouseover="highlightVar('epsilon')" onmouseout="unhighlightVar()">
-                        <rect x="700" y="720" width="250" height="70" rx="8" fill="white" stroke="#cbd5e1" stroke-width="2"/>
-                        <text x="825" y="750" text-anchor="middle" class="var-name">$\epsilon$</text>
-                        <text x="825" y="770" text-anchor="middle" class="var-def">Gaussian noise $\mathcal{N}(0,I)$</text>
-                    </g>
-
-                    <g class="variable-item" data-var="alpha" onmouseover="highlightVar('alpha')" onmasterout="unhighlightVar()">
-                        <rect x="1000" y="720" width="280" height="70" rx="8" fill="white" stroke="#cbd5e1" stroke-width="2"/>
-                        <text x="1140" y="750" text-anchor="middle" class="var-name">$\alpha_t$</text>
-                        <text x="1140" y="770" text-anchor="middle" class="var-def">Noise schedule parameter</text>
-                    </g>
-
-                    <!-- Beta and Alpha bar -->
-                    <g class="variable-item" data-var="beta" onmouseover="highlightVar('beta')" onmouseout="unhighlightVar()">
-                        <rect x="100" y="820" width="250" height="70" rx="8" fill="white" stroke="#cbd5e1" stroke-width="2"/>
-                        <text x="225" y="850" text-anchor="middle" class="var-name">$\beta_t = 1 - \alpha_t$</text>
-                        <text x="225" y="870" text-anchor="middle" class="var-def">Forward variance schedule</text>
-                    </g>
-
-                    <g class="variable-item" data-var="alphabar" onmouseover="highlightVar('alphabar')" onmouseout="unhighlightVar()">
-                        <rect x="400" y="820" width="250" height="70" rx="8" fill="white" stroke="#cbd5e1" stroke-width="2"/>
-                        <text x="525" y="850" text-anchor="middle" class="var-name">$\bar{\alpha}_t = \prod_{i=1}^t \alpha_i$</text>
-                        <text x="525" y="870" text-anchor="middle" class="var-def">Cumulative product</text>
-                    </g>
-
-                    <g class="variable-item" data-var="score" onmouseover="highlightVar('score')" onmouseout="unhighlightVar()">
-                        <rect x="700" y="820" width="250" height="70" rx="8" fill="white" stroke="#cbd5e1" stroke-width="2"/>
-                        <text x="825" y="850" text-anchor="middle" class="var-name">$\nabla_x \log p_t(x)$</text>
-                        <text x="825" y="870" text-anchor="middle" class="var-def">Score function (Stein score)</text>
-                    </g>
-
-                    <g class="variable-item" data-var="transition" onmouseover="highlightVar('transition')" onmouseout="unhighlightVar()">
-                        <rect x="1000" y="820" width="280" height="70" rx="8" fill="white" stroke="#cbd5e1" stroke-width="2"/>
-                        <text x="1140" y="850" text-anchor="middle" class="var-name">$q(x_t|x_{t-1})$</text>
-                        <text x="1140" y="870" text-anchor="middle" class="var-def">Forward diffusion kernel</text>
-                    </g>
-                </g>
-            </svg>
-        </div>
+        <div id="chart-container"></div>
     </div>
 
+    <script src="js/notes-loader.js"></script>
+    <script src="js/data-loader.js"></script>
+    <script src="js/chart-renderer.js"></script>
     <script>
-        // Paper relationships mapping
-        const paperConnections = {
-            'score_matching': ['denoising', 'ncsn'],
-            'denoising': ['score_matching', 'ddpm'],
-            'ncsn': ['score_matching', 'score_sde'],
-            'thermodynamics': ['ddpm'],
-            'ddpm': ['improved', 'ddim', 'edm', 'denoising', 'thermodynamics'],
-            'improved': ['ddpm'],
-            'ddim': ['ddpm'],
-            'score_sde': ['ncsn', 'edm'],
-            'edm': ['ddpm', 'score_sde']
-        };
-
-        // Variable relationships (for highlighting)
-        const variableConnections = {
-            'alpha': ['beta', 'alphabar'],
-            'beta': ['alpha', 'alphabar'],
-            'alphabar': ['alpha', 'beta'],
-            'x0': ['xt'],
-            'xt': ['x0', 'epsilon', 'transition'],
-            'epsilon': ['xt'],
-            'score': ['xt'],
-            'transition': ['xt', 'alpha', 'beta']
-        };
-
-        let hoveredPaper = null;
-
-        function handleHover(paperId, isHover) {
-            const paperNodes = document.querySelectorAll(`.paper-node[data-id="${paperId}"]`);
-            const connections = document.querySelectorAll(`.connection-line[data-from="${paperId}"], .connection-line[data-to="${paperId}"]`);
-            const relatedPapers = new Set();
-
-            // Add connected papers
-            if (paperConnections[paperId]) {
-                paperConnections[paperId].forEach(id => relatedPapers.add(id));
-            }
-
-            // Clear all highlights
-            document.querySelectorAll('.paper-node').forEach(node => {
-                node.classList.remove('active', 'dimmed');
-            });
-            document.querySelectorAll('.connection-line').forEach(line => {
-                line.classList.remove('active', 'dimmed');
+        window.addEventListener('load', async function() {
+            NotesLoader.loadSidebar('notes-list');
+            await ChartRenderer.init({
+                container: '#chart-container',
+                showVariables: true,
+                enableDrag: true,
+                enableZoom: true,
+                showTooltip: true,
+                sidebarDetails: true
             });
 
-            if (isHover) {
-                hoveredPaper = paperId;
-
-                // Highlight hovered paper
-                paperNodes.forEach(node => node.classList.add('active'));
-
-                // Highlight connected papers
-                relatedPapers.forEach(id => {
-                    document.querySelectorAll(`.paper-node[data-id="${id}"]`).forEach(node => {
-                        node.classList.add('active');
-                    });
-                });
-
-                // Highlight connections
-                connections.forEach(line => line.classList.add('active'));
-
-                // Dim unrelated papers
-                document.querySelectorAll('.paper-node').forEach(node => {
-                    const id = node.dataset.id;
-                    if (id !== paperId && !relatedPapers.has(id)) {
-                        node.classList.add('dimmed');
-                    }
-                });
-
-                // Dim unrelated connections
-                document.querySelectorAll('.connection-line').forEach(line => {
-                    const from = line.dataset.from;
-                    const to = line.dataset.to;
-                    if (from !== paperId && to !== paperId &&
-                        !relatedPapers.has(from) && !relatedPapers.has(to)) {
-                        line.classList.add('dimmed');
-                    }
-                });
-            } else {
-                hoveredPaper = null;
-                // Reset all
-                document.querySelectorAll('.paper-node').forEach(node => {
-                    node.classList.remove('active', 'dimmed');
-                });
-                document.querySelectorAll('.connection-line').forEach(line => {
-                    line.classList.remove('active', 'dimmed');
-                });
-            }
-        }
-
-        function highlightVar(varId) {
-            const varItems = document.querySelectorAll(`.variable-item[data-var="${varId}"]`);
-            const relatedVars = variableConnections[varId] || [];
-
-            // Highlight hovered variable
-            varItems.forEach(item => {
-                item.querySelector('rect').style.fill = '#e0e7ff';
-                item.querySelector('rect').style.stroke = '#667eea';
-                item.querySelector('rect').style.strokeWidth = '3';
+            // Build legend dynamically from chart data
+            const chartData = await DataLoader.loadChart();
+            const legend = document.getElementById('chart-legend');
+            let legendHtml = '<h4>Legend</h4>';
+            Object.values(chartData.categories).forEach(cat => {
+                legendHtml += `<div class="legend-item">
+                    <div class="legend-color" style="background:${cat.fill};border-color:${cat.stroke}"></div>
+                    <span>${cat.label}</span>
+                </div>`;
             });
-
-            // Highlight related variables
-            relatedVars.forEach(vId => {
-                document.querySelectorAll(`.variable-item[data-var="${vId}"]`).forEach(item => {
-                    item.querySelector('rect').style.fill = '#dcfce7';
-                });
-            });
-        }
-
-        function unhighlightVar() {
-            // Reset all variables
-            document.querySelectorAll('.variable-item rect').forEach(rect => {
-                rect.style.fill = 'white';
-                rect.style.stroke = '#cbd5e1';
-                rect.style.strokeWidth = '2';
-            });
-        }
+            legendHtml += `<div style="margin-top:8px;border-top:1px solid #e2e8f0;padding-top:8px;font-size:11px;color:#666;">
+                <div style="margin:3px 0;">&#x2500;&#x2500;&#x2500; inspires</div>
+                <div style="margin:3px 0;">- - - extends</div>
+                <div style="margin:3px 0;">&middot; &middot; applies</div>
+            </div>`;
+            legend.innerHTML = legendHtml;
+        });
     </script>
 </body>
 </html>

@@ -15,7 +15,9 @@ import re
 from typing import List, Dict, Any
 from datetime import datetime
 
-def load_papers(database_path: str = "papers/database/papers.json") -> List[Dict[str, Any]]:
+from constants import DB_PATH
+
+def load_papers(database_path: str = DB_PATH) -> List[Dict[str, Any]]:
     """加载论文数据库"""
     with open(database_path, 'r', encoding='utf-8') as f:
         data = json.load(f)

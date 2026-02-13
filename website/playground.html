@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diffusion Playground - Interactive Visualization</title>
+    <meta name="author" content="Diego & Shiying Zhang"/>
+    <meta name="description" content="Interactive 2D diffusion visualization: DDPM, DDIM, and Flow Matching with adjustable parameters"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <style>
+        /* Main content area */
+        .playground-main {
+            position: absolute;
+            left: 26%;
+            top: 14%;
+            width: 74%;
+            height: 83%;
+            overflow: hidden;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Canvas container */
+        .canvas-wrap { flex: 1; position: relative; min-height: 0; }
+        .canvas-wrap canvas { display: block; width: 100%; height: 100%; }
+
+        /* Playback bar */
+        .playback-bar {
+            display: flex; align-items: center; gap: 8px;
+            padding: 6px 14px; background: #f5f5f5;
+            border-top: 1px solid #ddd;
+            font-family: 'Georgia', serif; font-size: 13px;
+        }
+        .playback-bar button {
+            width: 34px; height: 28px; font-size: 14px; padding: 0;
+            border: 1px solid #999; background: #fff;
+            cursor: pointer; border-radius: 3px;
+        }
+        .playback-bar button:hover { background: #e0e0e0; }
+        .playback-bar input[type="range"] { flex: 1; }
+        .playback-bar .tl-label {
+            min-width: 100px; text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+        .speed-group {
+            display: flex; align-items: center; gap: 4px;
+            margin-left: 10px; border-left: 1px solid #ccc; padding-left: 10px;
+        }
+        .speed-group input[type="range"] { width: 60px; }
+
+        /* Formula panel */
+        .formula-bar {
+            padding: 8px 14px; background: #fafafa;
+            border-top: 1px solid #eee;
+            font-family: 'Georgia', serif; font-size: 13px;
+            line-height: 1.6; min-height: 42px;
+        }
+        .formula-label { font-weight: bold; }
+        .formula-values { color: #555; font-size: 12px; }
+
+        /* Sidebar control groups */
+        .ctrl-group {
+            margin: 12px 10px;
+            font-family: 'Georgia', serif; font-size: 13px;
+        }
+        .ctrl-group h4 {
+            margin: 0 0 8px 0; font-size: 13px;
+            border-bottom: 1px solid #ddd; padding-bottom: 4px;
+        }
+        .ctrl-row {
+            display: flex; align-items: center;
+            justify-content: space-between; margin: 6px 0;
+        }
+        .ctrl-row label { flex: 0 0 auto; }
+        .ctrl-row select,
+        .ctrl-row input[type="range"] { flex: 1; margin-left: 8px; max-width: 130px; }
+        .ctrl-row .val {
+            min-width: 40px; text-align: right;
+            font-variant-numeric: tabular-nums;
+            margin-left: 4px; color: #555;
+        }
+        .ctrl-row input[type="checkbox"] { margin-left: 8px; }
+        .dir-btn {
+            width: 100%; padding: 6px;
+            font-family: 'Georgia', serif; font-size: 13px; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══ Site chrome ═══ -->
+    <div id="logo">
+        <h2 style="margin: 10px; font-family: 'Georgia', serif;">Play</h2>
+    </div>
+
+    <div id="header">
+        <h1 style="margin-top: 15px; font-family: 'Georgia', serif; font-weight: normal;">
+            Diffusion Playground
+        </h1>
+        <p style="margin: 5px 0 0 0; font-size: 14px; color: #666;">
+            DDPM &middot; DDIM &middot; Flow Matching &mdash; interactive 2D visualization
+        </p>
+    </div>
+
+    <div id="chartbutton">
+        <a href="interactive.html"><button style="width:100%;height:100%;font-family:'Georgia',serif;font-size:14px;">Interactive Chart</button></a>
+    </div>
+    <div id="aboutbutton">
+        <a href="papers.html"><button style="width:100%;height:100%;font-family:'Georgia',serif;font-size:14px;">Reading List</button></a>
+    </div>
+    <div id="linksbutton">
+        <a href="playground.html"><button style="width:100%;height:100%;font-family:'Georgia',serif;font-size:14px;background:#e0e7ff;">Playground</button></a>
+    </div>
+    <div id="contactbutton">
+        <a href="issues.html"><button style="width:100%;height:100%;font-family:'Georgia',serif;font-size:14px;">Discuss</button></a>
+    </div>
+
+    <!-- ═══ Sidebar ═══ -->
+    <div id="distributions">
+        <h3 style="margin: 10px; font-family: 'Georgia', serif; border-bottom: 2px solid #000;">Controls</h3>
+
+        <!-- Sampler -->
+        <div class="ctrl-group">
+            <h4>Sampler</h4>
+            <div class="ctrl-row">
+                <label>Method</label>
+                <select id="ctrl-sampler">
+                    <option value="ddpm">DDPM</option>
+                    <option value="ddim">DDIM</option>
+                    <option value="flow">Flow Matching</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Source distribution -->
+        <div class="ctrl-group">
+            <h4>Source Distribution</h4>
+            <div class="ctrl-row">
+                <label>Shape</label>
+                <select id="ctrl-source">
+                    <option value="dog">Dog</option>
+                    <option value="cat">Cat</option>
+                    <option value="heart">Heart</option>
+                    <option value="star">Star</option>
+                    <option value="butterfly">Butterfly</option>
+                    <option value="checkerboard">Checkerboard</option>
+                    <option value="swissRoll">Swiss Roll</option>
+                    <option value="twoMoons">Two Moons</option>
+                    <option value="gaussianMix">Gaussian Mix</option>
+                    <option value="gaussian">Gaussian</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Target distribution (flow only) -->
+        <div class="ctrl-group" id="target-group" data-show="flow">
+            <h4>Target Distribution</h4>
+            <div class="ctrl-row">
+                <label>Shape</label>
+                <select id="ctrl-target">
+                    <option value="cat">Cat</option>
+                    <option value="dog">Dog</option>
+                    <option value="heart">Heart</option>
+                    <option value="star">Star</option>
+                    <option value="butterfly">Butterfly</option>
+                    <option value="gaussian">Gaussian</option>
+                    <option value="checkerboard">Checkerboard</option>
+                    <option value="swissRoll">Swiss Roll</option>
+                    <option value="twoMoons">Two Moons</option>
+                    <option value="gaussianMix">Gaussian Mix</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Particles (always visible) -->
+        <div class="ctrl-group">
+            <h4>Particles</h4>
+            <div class="ctrl-row">
+                <label>Count</label>
+                <input type="range" id="ctrl-particles" min="50" max="500" step="10" value="200">
+                <span class="val" id="val-particles">200</span>
+            </div>
+        </div>
+
+        <!-- Noise Schedule (DDPM / DDIM only) -->
+        <div class="ctrl-group" data-show="ddpm ddim">
+            <h4>Noise Schedule</h4>
+            <div class="ctrl-row">
+                <label>Type</label>
+                <select id="ctrl-schedule">
+                    <option value="linear">Linear</option>
+                    <option value="cosine">Cosine</option>
+                </select>
+            </div>
+            <div class="ctrl-row">
+                <label>&beta;<sub>min</sub></label>
+                <input type="range" id="ctrl-beta-min" min="0.0001" max="0.01" step="0.0001" value="0.0001">
+                <span class="val" id="val-beta-min">0.0001</span>
+            </div>
+            <div class="ctrl-row">
+                <label>&beta;<sub>max</sub></label>
+                <input type="range" id="ctrl-beta-max" min="0.01" max="0.5" step="0.01" value="0.02">
+                <span class="val" id="val-beta-max">0.02</span>
+            </div>
+        </div>
+
+        <!-- Steps (always visible) -->
+        <div class="ctrl-group">
+            <h4>Steps</h4>
+            <div class="ctrl-row">
+                <label>T</label>
+                <input type="range" id="ctrl-steps" min="20" max="500" step="10" value="200">
+                <span class="val" id="val-steps">200</span>
+            </div>
+        </div>
+
+        <!-- Eta (DDIM only) -->
+        <div class="ctrl-group" data-show="ddim">
+            <h4>DDIM &eta;</h4>
+            <div class="ctrl-row">
+                <label>&eta;</label>
+                <input type="range" id="ctrl-eta" min="0" max="1" step="0.05" value="0">
+                <span class="val" id="val-eta">0.00</span>
+            </div>
+            <div style="font-size:11px;color:#888;margin-top:4px;">
+                0 = deterministic &nbsp; 1 = same as DDPM
+            </div>
+        </div>
+
+        <!-- Direction -->
+        <div class="ctrl-group">
+            <h4>Direction</h4>
+            <button id="ctrl-direction" class="dir-btn">Forward &rarr;</button>
+        </div>
+
+        <!-- Display -->
+        <div class="ctrl-group">
+            <h4>Display</h4>
+            <div class="ctrl-row">
+                <label>Show Trails</label>
+                <input type="checkbox" id="ctrl-trails" checked>
+            </div>
+            <div class="ctrl-row">
+                <label>Show Grid</label>
+                <input type="checkbox" id="ctrl-grid" checked>
+            </div>
+            <div class="ctrl-row">
+                <label>Trail Length</label>
+                <input type="range" id="ctrl-trail-length" min="10" max="100" step="5" value="40">
+                <span class="val" id="val-trail-length">40</span>
+            </div>
+        </div>
+
+        <div style="margin: 20px 10px; padding: 10px; background-color: #f9f9f9; border: 1px solid #ccc;">
+            <p style="font-size: 12px; line-height: 1.6; font-family: 'Georgia', serif;">
+                <strong>Tips:</strong><br>
+                &bull; <b>DDPM</b>: stochastic reverse &mdash; Dog diffuses to noise, then reconstructs<br>
+                &bull; <b>DDIM</b>: deterministic (&eta;=0) or stochastic (&eta;=1)<br>
+                &bull; <b>Flow Matching</b>: straight-line transport &mdash; e.g. Dog &rarr; Cat
+            </p>
+        </div>
+    </div>
+
+    <!-- ═══ Main area ═══ -->
+    <div class="playground-main">
+        <div class="canvas-wrap">
+            <canvas id="pg-canvas"></canvas>
+        </div>
+
+        <!-- Playback -->
+        <div class="playback-bar">
+            <button id="btn-reset" title="Reset">&#x23EE;</button>
+            <button id="btn-step-back" title="Step Back">&#x25C0;</button>
+            <button id="btn-play" title="Play / Pause">&#x25B6;</button>
+            <button id="btn-step-fwd" title="Step Forward">&#x25B6;&#xFE0E;</button>
+            <button id="btn-end" title="Jump to End">&#x23ED;</button>
+            <input type="range" id="timeline-slider" min="0" max="200" value="0">
+            <span class="tl-label" id="timeline-label">t = 0 / 200</span>
+            <div class="speed-group">
+                <label>Speed</label>
+                <input type="range" id="ctrl-speed" min="1" max="10" value="1">
+                <span class="val" id="val-speed">1x</span>
+            </div>
+        </div>
+
+        <!-- Formula -->
+        <div class="formula-bar" id="formula-panel">
+            <span class="formula-label">t = 0</span> &mdash; Source distribution
+        </div>
+    </div>
+
+    <script src="js/diffusion-playground.js"></script>
+    <script>
+        window.addEventListener('load', function () {
+            DiffusionPlayground.init();
+        });
+    </script>
+</body>
+</html>

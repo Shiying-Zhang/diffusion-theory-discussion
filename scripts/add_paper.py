@@ -11,19 +11,12 @@ import uuid
 from datetime import datetime
 from typing import List, Dict, Any
 
-VALID_TOPICS = [
-    'foundations', 'score_based_models', 'denoising_diffusion',
-    'improved_sampling', 'training_stability', 'architecture',
-    'conditional_generation', 'image_generation', 'video_generation',
-    '3d_generation', 'multimodal', 'theory_survey', 'application_survey'
-]
+from constants import (
+    VALID_TOPICS, VALID_LEVELS, VALID_PRIORITIES, VALID_STATUS, VALID_VENUES,
+    DB_PATH,
+)
 
-VALID_LEVELS = ['beginner', 'intermediate', 'advanced']
-VALID_PRIORITIES = ['high', 'medium', 'low']
-VALID_STATUS = ['unread', 'reading', 'completed', 'review']
-VALID_VENUES = ['NeurIPS', 'ICML', 'ICLR', 'AAAI', 'IJCAI', 'CVPR', 'ICCV', 'ECCV', 'ArXiv', 'JMLR', 'PAMI', 'Other']
-
-def load_papers(database_path: str = "papers/database/papers.json") -> Dict[str, Any]:
+def load_papers(database_path: str = DB_PATH) -> Dict[str, Any]:
     """加载论文数据库"""
     with open(database_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
@@ -44,7 +37,7 @@ def validate_topic(topic: str) -> bool:
     """验证主题是否有效"""
     return topic in VALID_TOPICS
 
-def save_papers(data: Dict[str, Any], database_path: str = "papers/database/papers.json"):
+def save_papers(data: Dict[str, Any], database_path: str = DB_PATH):
     """保存论文数据库"""
     data['last_updated'] = datetime.now().strftime('%Y-%m-%d')
 

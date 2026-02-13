@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📚 Paper Reading List - Diffusion Models</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
     <style>
         .paper-list-page {
             position: absolute;
@@ -138,10 +138,6 @@
             background: #5568d3;
         }
 
-        .status-icon {
-            font-size: 1.2em;
-        }
-
         .section-title {
             color: #1e293b;
             font-size: 1.8em;
@@ -174,7 +170,7 @@
     </div>
 
     <div id="linksbutton">
-        <a href="../scripts/search_papers.py"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">🔍 Search</button></a>
+        <a href="https://github.com/Shiying-Zhang/diffusion-theory-discussion" target="_blank"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">🔍 Search</button></a>
     </div>
 
     <div id="contactbutton">
@@ -197,9 +193,9 @@
         <div style="margin: 15px 10px;">
             <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">🎯 Quick Links</h4>
             <ul style="list-style-type: none; padding-left: 10px; line-height: 1.8;">
-                <li><a href="../scripts/search_papers.py">• 🔍 Search Papers</a></li>
-                <li><a href="../scripts/generate_report.py">• 📊 Generate Report</a></li>
-                <li><a href="../papers/database/papers.json">• 📄 Database (JSON)</a></li>
+                <li><a href="../notes/ddpm.md">• 📄 DDPM Notes</a></li>
+                <li><a href="../notes/score-based-sde.md">• 📄 Score SDE Notes</a></li>
+                <li><a href="../data/papers.json">• 📄 Database (JSON)</a></li>
             </ul>
         </div>
 
@@ -216,7 +212,7 @@
     <div class="paper-list-page">
         <div class="paper-list-header">
             <h1>📚 Diffusion Models: Theoretical Foundations</h1>
-            <p>Curated by Diego & Shiying | Last Updated: 2025-12-01</p>
+            <p>Curated by Diego & Shiying | <span id="papers-stats">Loading...</span></p>
         </div>
 
         <h2 class="section-title">🎯 Reading Tracks</h2>
@@ -256,179 +252,8 @@
         </div>
 
         <h2 class="section-title">📄 All Papers</h2>
-        <div class="papers-grid">
-            <div class="paper-card">
-                <h3>💎 Estimation of Non-Normalized Statistical Models by Score Matching</h3>
-                <div class="authors">Aapo Hyvärinen (2005) • JMLR</div>
-                <div class="meta">
-                    <span class="tag">foundations</span>
-                    <span class="tag">score_matching</span>
-                </div>
-                <p style="font-size: 0.9em; color: #666;">Score matching的开创性工作，奠定了后续denoising score matching的理论基础。</p>
-                <div class="paper-links">
-                    <a href="papers/paper.html?id=score_matching_2005">View Details</a>
-                    <a href="https://jmlr.org/papers/v6/hyvarinen05a.html" target="_blank">ArXiv</a>
-                </div>
-            </div>
-
-            <div class="paper-card">
-                <h3>💎 Denoising Diffusion Probabilistic Models ⭐</h3>
-                <div class="authors">Jonathan Ho, Ajay Jain, Pieter Abbeel (2020) • NeurIPS</div>
-                <div class="meta">
-                    <span class="tag">foundations</span>
-                    <span class="tag">denoising_diffusion</span>
-                    <span class="status-icon">✅</span>
-                </div>
-                <p style="font-size: 0.9em; color: #666;">扩散模型的里程碑式工作，简化了训练目标，使扩散模型真正可实用。</p>
-                <div class="paper-links">
-                    <a href="papers/paper.html?id=ddpm_2020">View Details</a>
-                    <a href="https://arxiv.org/abs/2006.11239" target="_blank">ArXiv</a>
-                    <a href="../Notes/DDPM.md">📝 Notes</a>
-                </div>
-            </div>
-
-            <div class="paper-card">
-                <h3>💎 Score-Based Generative Modeling through SDEs ⭐</h3>
-                <div class="authors">Yang Song, Jascha Sohl-Dickstein, et al. (2021) • ICLR</div>
-                <div class="meta">
-                    <span class="tag">foundations</span>
-                    <span class="tag">score_based_models</span>
-                    <span class="status-icon">✅</span>
-                </div>
-                <p style="font-size: 0.9em; color: #666;">将离散扩散过程推广到连续SDE框架，统一了多种扩散模型变体。</p>
-                <div class="paper-links">
-                    <a href="papers/paper.html?id=score_sde_2021">View Details</a>
-                    <a href="https://arxiv.org/abs/2011.13456" target="_blank">ArXiv</a>
-                    <a href="../Notes/Score-based SDE.md">📝 Notes</a>
-                </div>
-            </div>
-
-            <div class="paper-card">
-                <h3>💎 Deep Unsupervised Learning using Nonequilibrium Thermodynamics</h3>
-                <div class="authors">Jascha Sohl-Dickstein, et al. (2015) • ICML</div>
-                <div class="meta">
-                    <span class="tag">foundations</span>
-                    <span class="tag">thermodynamics</span>
-                    <span class="status-icon">🔄</span>
-                </div>
-                <p style="font-size: 0.9em; color: #666;">第一个将热力学原理引入生成模型的工作，提出了基于扩散过程的生成建模框架。</p>
-                <div class="paper-links">
-                    <a href="papers/paper.html?id=thermodynamics_2015">View Details</a>
-                    <a href="https://arxiv.org/abs/1503.03585" target="_blank">ArXiv</a>
-                </div>
-            </div>
-
-            <div class="paper-card">
-                <h3>⭐ Elucidating the Design Space of Diffusion (EDM)</h3>
-                <div class="authors">Tero Karras, et al. (2022) • NeurIPS</div>
-                <div class="meta">
-                    <span class="tag">foundations</span>
-                    <span class="tag">theory_survey</span>
-                </div>
-                <p style="font-size: 0.9em; color: #666;">系统性分析扩散模型设计空间的核心工作，提供了实用的超参数选择指南。</p>
-                <div class="paper-links">
-                    <a href="papers/paper.html?id=edm_2022">View Details</a>
-                    <a href="https://arxiv.org/abs/2206.00364" target="_blank">ArXiv</a>
-                </div>
-            </div>
-
-            <div class="paper-card">
-                <h3>Generative Modeling by Estimating Gradients (NCSN)</h3>
-                <div class="authors">Yang Song, Stefano Ermon (2019) • NeurIPS</div>
-                <div class="meta">
-                    <span class="tag">foundations</span>
-                    <span class="tag">score_based_models</span>
-                    <span class="status-icon">✅</span>
-                </div>
-                <p style="font-size: 0.9em; color: #666;">现代score-based generative models的起点，通过噪声条件化score网络和Langevin动力学进行采样。</p>
-                <div class="paper-links">
-                    <a href="papers/paper.html?id=ncsn_2019">View Details</a>
-                    <a href="https://arxiv.org/abs/1907.05600" target="_blank">ArXiv</a>
-                </div>
-            </div>
-
-            <div class="paper-card">
-                <h3>Denoising Diffusion Implicit Models (DDIM)</h3>
-                <div class="authors">Jiaming Song, et al. (2020) • ICLR</div>
-                <div class="meta">
-                    <span class="tag">methods</span>
-                    <span class="tag">improved_sampling</span>
-                </div>
-                <p style="font-size: 0.9em; color: #666;">提出非马尔可夫采样过程，大幅加速推理而保持生成质量。</p>
-                <div class="paper-links">
-                    <a href="papers/paper.html?id=ddim_2020">View Details</a>
-                    <a href="https://arxiv.org/abs/2010.02502" target="_blank">ArXiv</a>
-                </div>
-            </div>
-
-            <div class="paper-card">
-                <h3>Improved Denoising Diffusion Probabilistic Models</h3>
-                <div class="authors">Nichol & Dhariwal (2021) • ICML</div>
-                <div class="meta">
-                    <span class="tag">methods</span>
-                    <span class="tag">training_stability</span>
-                </div>
-                <p style="font-size: 0.9em; color: #666;">对DDPM的重要改进，提升了采样质量和训练效率。</p>
-                <div class="paper-links">
-                    <a href="papers/paper.html?id=improved_ddpm_2021">View Details</a>
-                    <a href="https://arxiv.org/abs/2102.09672" target="_blank">ArXiv</a>
-                </div>
-            </div>
-
-            <div class="paper-card">
-                <h3>Understanding Diffusion Models: A Unified Perspective</h3>
-                <div class="authors">Calvin Luo (2022) • ArXiv</div>
-                <div class="meta">
-                    <span class="tag">theory_survey</span>
-                </div>
-                <p style="font-size: 0.9em; color: #666;">优秀的综述性工作，从统一视角理解各种扩散模型变体。</p>
-                <div class="paper-links">
-                    <a href="papers/paper.html?id=unified_2022">View Details</a>
-                    <a href="https://arxiv.org/abs/2208.11970" target="_blank">ArXiv</a>
-                </div>
-            </div>
-
-            <div class="paper-card">
-                <h3>Classifier-Free Diffusion Guidance</h3>
-                <div class="authors">Jonathan Ho, Tim Salimans (2022) • NeurIPS Workshop</div>
-                <div class="meta">
-                    <span class="tag">methods</span>
-                    <span class="tag">conditional_generation</span>
-                </div>
-                <p style="font-size: 0.9em; color: #666;">无需额外分类器的条件生成方法，通过无分类器训练实现条件控制。</p>
-                <div class="paper-links">
-                    <a href="papers/paper.html?id=guidance_2022">View Details</a>
-                    <a href="https://arxiv.org/abs/2207.12598" target="_blank">ArXiv</a>
-                </div>
-            </div>
-
-            <div class="paper-card">
-                <h3>Flow Matching for Generative Modeling</h3>
-                <div class="authors">Yaron Lipman, et al. (2023) • ICLR</div>
-                <div class="meta">
-                    <span class="tag">methods</span>
-                    <span class="tag">theory_survey</span>
-                </div>
-                <p style="font-size: 0.9em; color: #666;">新的训练范式，直接学习概率流，避免扩散过程的某些限制。</p>
-                <div class="paper-links">
-                    <a href="papers/paper.html?id=flow_matching_2023">View Details</a>
-                    <a href="https://arxiv.org/abs/2210.02747" target="_blank">ArXiv</a>
-                </div>
-            </div>
-
-            <div class="paper-card">
-                <h3>Consistency Models</h3>
-                <div class="authors">Yang Song, et al. (2023) • ICML</div>
-                <div class="meta">
-                    <span class="tag">methods</span>
-                    <span class="tag">architecture</span>
-                </div>
-                <p style="font-size: 0.9em; color: #666;">新的生成模型范式，实现单步生成，显著提升效率。</p>
-                <div class="paper-links">
-                    <a href="papers/paper.html?id=consistency_2023">View Details</a>
-                    <a href="https://arxiv.org/abs/2303.01469" target="_blank">ArXiv</a>
-                </div>
-            </div>
+        <div class="papers-grid" id="papers-grid">
+            <p>Loading papers...</p>
         </div>
 
         <div style="margin: 40px 0; padding: 30px; background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
@@ -436,7 +261,7 @@
             <ol style="line-height: 2; color: #666;">
                 <li>选择合适的路径：根据你的背景选择 Foundation、Theory 或 Advanced 路径</li>
                 <li>主动提问：阅读过程中的困惑请在 Issues 中提出</li>
-                <li>做笔记：考虑在 <code>Notes/</code> 文件夹中记录你的理解和疑问</li>
+                <li>做笔记：考虑在 <code>notes/</code> 文件夹中记录你的理解和疑问</li>
                 <li>参与讨论：欢迎在相关问题讨论中分享你的见解</li>
             </ol>
         </div>
@@ -452,5 +277,13 @@
             </div>
         </div>
     </div>
+
+    <script src="js/data-loader.js"></script>
+    <script src="js/paper-list-renderer.js"></script>
+    <script>
+        window.addEventListener('load', function() {
+            PaperListRenderer.init();
+        });
+    </script>
 </body>
 </html>

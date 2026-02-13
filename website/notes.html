@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes - Diffusion Theory</title>
+    <meta name="author" content="Diego & Shiying Zhang"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <!-- marked.js for markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        /* Main content area */
+        #note-content {
+            position: absolute;
+            left: 26%;
+            top: 14%;
+            width: 74%;
+            height: 83%;
+            overflow: auto;
+            background: #ffffff;
+            padding: 30px 40px;
+            box-sizing: border-box;
+            font-family: 'Georgia', serif;
+            line-height: 1.8;
+        }
+
+        /* ── Markdown rendering styles ── */
+        #note-content h1 {
+            font-size: 26px; font-weight: bold;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px; margin: 0 0 20px 0;
+        }
+        #note-content h2 {
+            font-size: 20px; font-weight: bold;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 6px; margin: 28px 0 14px 0;
+        }
+        #note-content h3 { font-size: 17px; margin: 22px 0 10px 0; }
+        #note-content h4 { font-size: 15px; margin: 18px 0 8px 0; }
+
+        #note-content p { margin: 10px 0; }
+
+        #note-content code {
+            background: #f1f5f9; padding: 2px 6px;
+            border-radius: 3px; font-size: 0.92em;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        #note-content pre {
+            background: #1e293b; color: #e2e8f0;
+            padding: 16px 20px; border-radius: 6px;
+            overflow-x: auto; margin: 16px 0;
+            line-height: 1.5;
+        }
+        #note-content pre code {
+            background: none; padding: 0; color: inherit;
+        }
+
+        #note-content blockquote {
+            border-left: 4px solid #667eea;
+            margin: 16px 0; padding: 10px 20px;
+            background: #f8fafc; color: #475569;
+        }
+        #note-content blockquote p { margin: 6px 0; }
+
+        #note-content ul, #note-content ol {
+            margin: 10px 0; padding-left: 28px;
+        }
+        #note-content li { margin: 4px 0; }
+
+        #note-content table {
+            border-collapse: collapse; margin: 16px 0; width: 100%;
+        }
+        #note-content th, #note-content td {
+            border: 1px solid #e2e8f0; padding: 8px 12px; text-align: left;
+        }
+        #note-content th { background: #f8fafc; font-weight: bold; }
+
+        #note-content img { max-width: 100%; border-radius: 4px; }
+
+        #note-content a { color: #667eea; }
+        #note-content a:hover { text-decoration: underline; }
+
+        #note-content hr {
+            border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;
+        }
+
+        /* KaTeX / math (if user writes $...$ we at least don't break) */
+        #note-content .math { font-family: 'Times New Roman', serif; font-style: italic; }
+
+        /* Loading / error states */
+        .note-status {
+            padding: 40px; text-align: center; color: #94a3b8;
+            font-size: 15px;
+        }
+        .note-status a { color: #667eea; }
+
+        /* Active note highlight in sidebar */
+        #notes-list li a.active {
+            font-weight: bold; color: #667eea;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══ Site chrome ═══ -->
+    <div id="logo">
+        <h2 style="margin: 10px; font-family: 'Georgia', serif;">Notes</h2>
+    </div>
+
+    <div id="header">
+        <h1 id="note-title" style="margin-top: 15px; font-family: 'Georgia', serif; font-weight: normal;">
+            Reading Notes
+        </h1>
+        <p style="margin: 5px 0 0 0; font-size: 14px; color: #666;">
+            Auto-loaded from <code>notes/</code> directory
+        </p>
+    </div>
+
+    <div id="chartbutton">
+        <a href="interactive.html"><button style="width:100%;height:100%;font-family:'Georgia',serif;font-size:14px;">Interactive Chart</button></a>
+    </div>
+    <div id="aboutbutton">
+        <a href="papers.html"><button style="width:100%;height:100%;font-family:'Georgia',serif;font-size:14px;">Reading List</button></a>
+    </div>
+    <div id="linksbutton">
+        <a href="playground.html"><button style="width:100%;height:100%;font-family:'Georgia',serif;font-size:14px;">Playground</button></a>
+    </div>
+    <div id="contactbutton">
+        <a href="issues.html"><button style="width:100%;height:100%;font-family:'Georgia',serif;font-size:14px;">Discuss</button></a>
+    </div>
+
+    <!-- ═══ Sidebar ═══ -->
+    <div id="distributions">
+        <h3 style="margin: 10px; font-family: 'Georgia', serif; border-bottom: 2px solid #000;">Notes</h3>
+
+        <div style="margin: 15px 10px;">
+            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">All Notes</h4>
+            <ul id="notes-list" style="list-style-type: none; padding-left: 10px; line-height: 1.8;">
+                <li style="color:#999;">Loading...</li>
+            </ul>
+        </div>
+
+        <div style="margin: 15px 10px;">
+            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">Navigation</h4>
+            <ul style="list-style-type: none; padding-left: 10px; line-height: 1.8;">
+                <li><a href="index.html">Simple Chart</a></li>
+                <li><a href="interactive.html">Interactive Network</a></li>
+                <li><a href="papers.html">All Papers</a></li>
+                <li><a href="playground.html">Playground</a></li>
+            </ul>
+        </div>
+
+        <div style="margin: 20px 10px; padding: 10px; background-color: #f9f9f9; border: 1px solid #ccc;">
+            <p style="font-size: 12px; line-height: 1.6; font-family: 'Georgia', serif;">
+                <strong>Auto-sync:</strong> Just add a <code>.md</code> file to the <code>notes/</code> folder and push to GitHub. It will appear here automatically.
+            </p>
+        </div>
+    </div>
+
+    <!-- ═══ Main content ═══ -->
+    <div id="note-content">
+        <div class="note-status" id="note-status">Loading...</div>
+    </div>
+
+    <script src="js/notes-loader.js"></script>
+    <script>
+        (async function () {
+            // 1. Load sidebar
+            await NotesLoader.loadSidebar('notes-list', 'notes.html');
+
+            // 2. Determine which note to show
+            var params = new URLSearchParams(window.location.search);
+            var file = params.get('file');
+
+            if (!file) {
+                // No file specified: show index of all notes
+                showIndex();
+                return;
+            }
+
+            // 3. Load and render the note
+            try {
+                var result = await NotesLoader.loadNote(file);
+                document.getElementById('note-title').textContent = result.meta.displayName;
+                document.title = result.meta.displayName + ' - Notes';
+                document.getElementById('note-content').innerHTML = marked.parse(result.content);
+
+                // Highlight active note in sidebar
+                var links = document.querySelectorAll('#notes-list a');
+                links.forEach(function (a) {
+                    if (a.href.indexOf('file=' + encodeURIComponent(file)) !== -1) {
+                        a.classList.add('active');
+                    }
+                });
+            } catch (e) {
+                document.getElementById('note-content').innerHTML =
+                    '<div class="note-status">Could not load <strong>' +
+                    file + '</strong>.<br><br>' + e.message + '</div>';
+            }
+
+            async function showIndex() {
+                try {
+                    var notes = await NotesLoader.listNotes();
+                    if (notes.length === 0) {
+                        document.getElementById('note-content').innerHTML =
+                            '<div class="note-status">No notes yet.<br>Add a <code>.md</code> file to <code>notes/</code> and push.</div>';
+                        return;
+                    }
+                    var html = '<h1>Reading Notes</h1>' +
+                        '<p style="color:#666;">Select a note from the sidebar, or choose below:</p>' +
+                        '<ul style="line-height:2; font-size:16px;">';
+                    notes.forEach(function (n) {
+                        html += '<li><a href="notes.html?file=' +
+                            encodeURIComponent(n.name) + '">' +
+                            n.displayName + '</a></li>';
+                    });
+                    html += '</ul>';
+                    document.getElementById('note-content').innerHTML = html;
+                } catch (e) {
+                    document.getElementById('note-content').innerHTML =
+                        '<div class="note-status">Could not load notes list.<br>' +
+                        '<a href="https://github.com/Shiying-Zhang/diffusion-theory-discussion/tree/main/notes" target="_blank">' +
+                        'View on GitHub</a></div>';
+                }
+            }
+        })();
+    </script>
+</body>
+</html>

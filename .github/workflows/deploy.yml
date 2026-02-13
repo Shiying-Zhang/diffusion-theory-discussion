@@ -24,27 +24,31 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
-      - name: Copy website files to pages
+      - name: Assemble site
         run: |
-          # Create pages directory
-          mkdir -p ./_pages_temp
+          mkdir -p ./_site
 
-          # Copy all website files to temporary location
-          cp -r website/* ./_pages_temp/
+          # Copy all website files
+          cp -r website/* ./_site/
 
-          # Copy root level files that are needed
-          cp README.md ./_pages_temp/
-          cp -r Notes ./_pages_temp/ 2>/dev/null || true
+          # Copy data directory (papers.json for JS fetch)
+          cp -r data ./_site/data
 
-          # Move interactive.html to index.html as the main page
-          if [ -f ./_pages_temp/interactive.html ]; then
-            cp ./_pages_temp/interactive.html ./_pages_temp/index.html
+          # Copy notes (for markdown links)
+          cp -r notes ./_site/notes
+
+          # Copy root README
+          cp README.md ./_site/
+
+          # Make interactive.html the main page
+          if [ -f ./_site/interactive.html ]; then
+            cp ./_site/interactive.html ./_site/index.html
           fi
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./_pages_temp
+          path: ./_site
 
   deploy:
     environment:
@@ -56,4 +60,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-

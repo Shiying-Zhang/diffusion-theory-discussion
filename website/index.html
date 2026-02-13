@@ -1,115 +1,58 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diffusion Models: Paper Reading Chart</title>
     <meta name="author" content="Diego & Shiying Zhang"/>
     <meta name="keywords" content="diffusion models, score matching, EDM, theoretical foundations, deep learning, papers"/>
     <meta name="description" content="Interactive chart of diffusion model papers with reading progress tracking"/>
-    <link rel="stylesheet" type="text/css" href="style.css" />
-
-    <script type="text/javascript">
-        GLOBAL_AREAS = new Array();
-        GLOBAL_WIDTH = 1;
-        myHeight = 600;
-
-        function scaleXY(elementid, scale) {
-            myscale = Math.max(0, scale);
-            oldwidth = document.getElementById(elementid).width
-            oldheight = document.getElementById(elementid).height
-            newwidth = Math.round(Math.max(oldwidth * myscale, 1));
-            newheight = Math.round(Math.max(oldheight * myscale, 1));
-            if(oldwidth == newwidth) newwidth = +1;
-            if(oldheight == newheight) newheight = +1;
-            document.getElementById(elementid).width = newwidth;
-            document.getElementById(elementid).height = newheight;
-            scaleArea();
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        #Charthouse {
+            position: absolute;
+            left: 26%;
+            top: 14%;
+            width: 74%;
+            height: 83%;
+            overflow: hidden;
+            background-color: #ffffff;
         }
 
-        function setXY(elementid, newwidth, newheight) {
-            document.getElementById(elementid).width = newwidth;
-            document.getElementById(elementid).height = newheight;
-            scaleArea();
+        #chart-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: #fafafa;
         }
 
-        function getglobal() {
-            var arrayAreas = document.body.getElementsByTagName("AREA");
-            GLOBAL_WIDTH = document.getElementById("Chart").width;
-            for(var i = 0; i < arrayAreas.length; i++) {
-                GLOBAL_AREAS[i] = arrayAreas[i].coords;
-            }
+        .paper-node {
+            cursor: pointer;
+            transition: opacity 0.3s ease;
         }
 
-        function scaleArea() {
-            var arrayAreas = document.body.getElementsByTagName("AREA");
-            for(var i = 0; i < arrayAreas.length; i++) {
-                rescale = document.getElementById("Chart").width / GLOBAL_WIDTH;
-                sarray = GLOBAL_AREAS[i].split(",");
-                var rarray = new Array();
-                for(var j = 0; j < sarray.length; j++) {
-                    rarray[j] = parseInt(sarray[j]) * rescale;
-                    rarray[j] = Math.round(rarray[j]);
-                }
-                arrayAreas[i].coords = rarray.join(",");
-            }
+        .paper-node circle {
+            transition: stroke 0.3s ease, stroke-width 0.3s ease;
         }
 
-        function getglobalplus() {
-            if(typeof(window.innerWidth) == 'number') {
-                myHeight = window.innerHeight;
-            } else {
-                myHeight = document.documentElement.clientHeight;
-            }
-            myHeight = myHeight * 0.83;
-
-            var chartImg = document.getElementById("Chart");
-            if(chartImg.complete) {
-                getglobal();
-                setPlace(1, 1);
-            } else {
-                chartImg.onload = function() {
-                    getglobal();
-                    setPlace(1, 1);
-                };
-            }
+        .paper-node text {
+            pointer-events: none;
         }
 
-        function setPlace(htLevel, wdLevel) {
-            setXY('Chart', myHeight * 1.2, myHeight);
-            divRef = document.getElementById("Charthouse");
-            divRef.scrollLeft = wdLevel * (divRef.scrollWidth - divRef.offsetWidth) / 2;
-            divRef.scrollTop = htLevel * (divRef.scrollHeight - divRef.offsetHeight) / 3;
+        .connection-line {
+            transition: stroke 0.3s ease, opacity 0.3s ease;
         }
-
-        // Show paper info
-        function showPaperInfo(paperId) {
-            window.location.href = 'papers/paper.html?id=' + paperId;
-        }
-
-        // Load stats
-        function loadStats() {
-            // This would typically fetch from a JSON file
-            // For now, we'll use placeholder data
-            document.getElementById('stat-total').textContent = '11';
-            document.getElementById('stat-completed').textContent = '3';
-            document.getElementById('stat-reading').textContent = '1';
-            document.getElementById('stat-unread').textContent = '7';
-        }
-
-        window.addEventListener('load', function() {
-            loadStats();
-            var chartImg = document.getElementById("Chart");
-            console.log("Chart loaded:", chartImg.complete);
-        });
-    </script>
+    </style>
 </head>
 
-<body onload="getglobalplus();">
+<body>
 
     <div id="logo">
-        <h2 style="margin: 10px; font-family: 'Georgia', serif;">📚 Papers</h2>
+        <h2 style="margin: 10px; font-family: 'Georgia', serif;">Papers</h2>
     </div>
 
-    <div id="header" onclick="setPlace(2, 0);" style="cursor: pointer;">
+    <div id="header" style="cursor: pointer;">
         <h1 style="margin-top: 15px; font-family: 'Georgia', serif; font-weight: normal;">
             Diffusion Models: Paper Reading Chart
         </h1>
@@ -119,61 +62,57 @@
     </div>
 
     <div id="chartbutton">
-        <a href="interactive.html"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">📊 Interactive Chart</button></a>
+        <a href="interactive.html"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">Interactive Chart</button></a>
     </div>
 
     <div id="aboutbutton">
-        <a href="papers.html"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">📖 Reading List</button></a>
+        <a href="papers.html"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">Reading List</button></a>
     </div>
 
     <div id="linksbutton">
-        <a href="../scripts/search_papers.py"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">🔍 Search</button></a>
+        <a href="playground.html"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">Playground</button></a>
     </div>
 
     <div id="contactbutton">
-        <a href="issues.html"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">💬 Discuss</button></a>
+        <a href="issues.html"><button style="width: 100%; height: 100%; font-family: 'Georgia', serif; font-size: 14px;">Discuss</button></a>
     </div>
 
     <div id="distributions">
         <h3 style="margin: 10px; font-family: 'Georgia', serif; border-bottom: 2px solid #000;">Navigation</h3>
 
         <div style="margin: 15px 10px;">
-            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">📊 Interactive Charts</h4>
+            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">Interactive Charts</h4>
             <ul style="list-style-type: none; padding-left: 10px; line-height: 1.8;">
-                <li><a href="index.html">• Simple SVG Chart</a></li>
-                <li><strong><a href="interactive.html">• Interactive Network ⭐</a></strong></li>
+                <li><strong><a href="index.html">Simple Chart</a></strong></li>
+                <li><a href="interactive.html">Interactive Network</a></li>
             </ul>
         </div>
 
         <div style="margin: 15px 10px;">
-            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">📚 Paper Resources</h4>
+            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">Paper Resources</h4>
             <ul style="list-style-type: none; padding-left: 10px; line-height: 1.8;">
-                <li><a href="papers.html">• 📖 All Papers</a></li>
-                <li><a href="../Notes/DDPM.md">• 📄 DDPM Notes</a></li>
-                <li><a href="../Notes/Score-based SDE.md">• 📄 Score SDE Notes</a></li>
+                <li><a href="papers.html">All Papers</a></li>
             </ul>
         </div>
 
         <div style="margin: 15px 10px;">
-            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">🔧 Tools</h4>
-            <ul style="list-style-type: none; padding-left: 10px; line-height: 1.8;">
-                <li><a href="../scripts/search_papers.py">• 🔍 Search Papers</a></li>
-                <li><a href="../scripts/generate_report.py">• 📊 Generate Report</a></li>
-                <li><a href="../scripts/update_status.py">• ✏️ Update Status</a></li>
+            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">Reading Notes</h4>
+            <ul id="notes-list" style="list-style-type: none; padding-left: 10px; line-height: 1.8;">
+                <li style="color:#999;">Loading...</li>
             </ul>
         </div>
 
         <div style="margin: 15px 10px;">
-            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">💬 Community</h4>
+            <h4 style="font-family: 'Georgia', serif; margin-bottom: 8px;">Community</h4>
             <ul style="list-style-type: none; padding-left: 10px; line-height: 1.8;">
-                <li><a href="issues.html">• 💬 Issues Board</a></li>
-                <li><a href="https://github.com/Shiying-Zhang/diffusion-theory-discussion" target="_blank">• ⭐ GitHub Repo</a></li>
+                <li><a href="issues.html">Issues Board</a></li>
+                <li><a href="https://github.com/Shiying-Zhang/diffusion-theory-discussion" target="_blank">GitHub Repo</a></li>
             </ul>
         </div>
 
         <div style="margin: 20px 10px; padding: 10px; background-color: #f9f9f9; border: 1px solid #ccc;">
             <p style="font-size: 12px; line-height: 1.6; font-family: 'Georgia', serif;">
-                <strong>About:</strong> Interactive chart showing diffusion model papers organized by theoretical layers. Click any paper box to view details, notes, and reading progress.
+                <strong>About:</strong> Interactive chart showing diffusion model papers organized by theoretical layers. Click any paper to view details, notes, and reading progress.
             </p>
             <p style="font-size: 11px; margin-top: 8px; color: #666;">
                 "Good questions guide good discussions, which in turn inspire solid work."
@@ -181,14 +120,14 @@
         </div>
     </div>
 
-    <div id="Zoomin" onclick="scaleXY('Chart', 1.2);" style="cursor: pointer;">
+    <div id="Zoomin" onclick="ChartRenderer.zoomIn();" style="cursor: pointer;">
         <svg width="20" height="20" viewBox="0 0 20 20">
             <circle cx="10" cy="10" r="8" stroke="black" stroke-width="2" fill="white"/>
             <text x="10" y="15" text-anchor="middle" font-size="16" font-weight="bold">+</text>
         </svg>
     </div>
 
-    <div id="Zoomout" onclick="scaleXY('Chart', 0.8);" style="cursor: pointer;">
+    <div id="Zoomout" onclick="ChartRenderer.zoomOut();" style="cursor: pointer;">
         <svg width="20" height="20" viewBox="0 0 20 20">
             <circle cx="10" cy="10" r="8" stroke="black" stroke-width="2" fill="white"/>
             <text x="10" y="14" text-anchor="middle" font-size="16" font-weight="bold">-</text>
@@ -196,158 +135,24 @@
     </div>
 
     <div id="Charthouse">
-        <!-- Inline SVG Chart to avoid CORS issues -->
-        <svg id="Chart" xmlns="http://www.w3.org/2000/svg" width="1400" height="1000" viewBox="0 0 1400 1000" style="max-width: 100%; height: auto;">
-            <defs>
-                <style>
-                    .paper-box { cursor: pointer; transition: opacity 0.2s; }
-                    .paper-box:hover { opacity: 0.8; }
-                    .layer-box { fill-opacity: 0.1; }
-                    text { font-family: Georgia, serif; }
-                </style>
-            </defs>
-
-            <!-- Title -->
-            <text x="700" y="40" font-size="24" text-anchor="middle" font-weight="bold">
-                Diffusion Models: Theoretical Foundations Chart
-            </text>
-            <text x="700" y="70" font-size="14" text-anchor="middle" fill="#666">
-                A Visual Map of Concepts, Papers, and Their Relationships
-            </text>
-
-            <!-- Foundational Layer -->
-            <rect class="layer-box" x="50" y="120" width="1300" height="180" fill="#f0f8ff" stroke="#000080" stroke-width="2" rx="10"/>
-            <text x="700" y="150" font-size="18" text-anchor="middle" font-weight="bold">
-                Layer 1: Mathematical Foundations
-            </text>
-
-            <!-- Mathematical Foundations Papers (Clickable) -->
-            <a href="papers/paper.html?id=score_matching_2005" class="paper-box">
-                <rect x="100" y="170" width="250" height="110" fill="#ffffff" stroke="#000" stroke-width="2" rx="5"/>
-                <text x="225" y="195" font-size="14" text-anchor="middle" font-weight="bold">Score Matching</text>
-                <text x="225" y="215" font-size="11" text-anchor="middle" fill="#444">Hyvärinen (2005)</text>
-            </a>
-
-            <a href="papers/paper.html?id=denoising_2011" class="paper-box">
-                <rect x="400" y="170" width="250" height="110" fill="#ffffff" stroke="#000" stroke-width="2" rx="5"/>
-                <text x="525" y="195" font-size="14" text-anchor="middle" font-weight="bold">Denoising Score Matching</text>
-                <text x="525" y="215" font-size="11" text-anchor="middle" fill="#444">Vincent (2011)</text>
-            </a>
-
-            <a href="papers/paper.html?id=ncsn_2019" class="paper-box">
-                <rect x="700" y="170" width="250" height="110" fill="#ffffff" stroke="#000" stroke-width="2" rx="5"/>
-                <text x="825" y="195" font-size="14" text-anchor="middle" font-weight="bold">NCSN</text>
-                <text x="825" y="215" font-size="11" text-anchor="middle" fill="#444">Song & Ermon (2019)</text>
-            </a>
-
-            <a href="papers/paper.html?id=thermodynamics_2015" class="paper-box">
-                <rect x="1000" y="170" width="250" height="110" fill="#ffffff" stroke="#000" stroke-width="2" rx="5"/>
-                <text x="1125" y="195" font-size="14" text-anchor="middle" font-weight="bold">Thermodynamic Inspiration</text>
-                <text x="1125" y="215" font-size="11" text-anchor="middle" fill="#444">Sohl-Dickstein (2015)</text>
-            </a>
-
-            <!-- Model Variants Layer -->
-            <rect class="layer-box" x="50" y="340" width="1300" height="240" fill="#fff8f0" stroke="#8B4513" stroke-width="2" rx="10"/>
-            <text x="700" y="370" font-size="18" text-anchor="middle" font-weight="bold">
-                Layer 2: Core Model Variants
-            </text>
-
-            <!-- Core Model Papers (Clickable) -->
-            <a href="papers/paper.html?id=ddpm_2020" class="paper-box">
-                <rect x="100" y="390" width="200" height="170" fill="#fffacd" stroke="#000" stroke-width="3" rx="5"/>
-                <text x="200" y="415" font-size="13" text-anchor="middle" font-weight="bold">DDPM ⭐</text>
-                <text x="200" y="435" font-size="10" text-anchor="middle" fill="#444">Ho et al. (2020)</text>
-            </a>
-
-            <a href="papers/paper.html?id=improved_ddpm_2021" class="paper-box">
-                <rect x="350" y="390" width="200" height="170" fill="#ffffff" stroke="#000" stroke-width="2" rx="5"/>
-                <text x="450" y="415" font-size="13" text-anchor="middle" font-weight="bold">Improved DDPM</text>
-                <text x="450" y="435" font-size="10" text-anchor="middle" fill="#444">Nichol & Dhariwal (2021)</text>
-            </a>
-
-            <a href="papers/paper.html?id=ddim_2020" class="paper-box">
-                <rect x="600" y="390" width="200" height="170" fill="#ffffff" stroke="#000" stroke-width="2" rx="5"/>
-                <text x="700" y="415" font-size="13" text-anchor="middle" font-weight="bold">DDIM</text>
-                <text x="700" y="435" font-size="10" text-anchor="middle" fill="#444">Song et al. (2021)</text>
-            </a>
-
-            <a href="papers/paper.html?id=score_sde_2021" class="paper-box">
-                <rect x="850" y="390" width="200" height="170" fill="#ffffff" stroke="#000" stroke-width="2" rx="5"/>
-                <text x="950" y="415" font-size="13" text-anchor="middle" font-weight="bold">Score-Based SDE</text>
-                <text x="950" y="435" font-size="10" text-anchor="middle" fill="#444">Song et al. (2021)</text>
-            </a>
-
-            <a href="papers/paper.html?id=unified_2022" class="paper-box">
-                <rect x="1100" y="390" width="200" height="170" fill="#ffffff" stroke="#000" stroke-width="2" rx="5"/>
-                <text x="1200" y="415" font-size="13" text-anchor="middle" font-weight="bold">Unified Perspective</text>
-                <text x="1200" y="435" font-size="10" text-anchor="middle" fill="#444">Luo (2022)</text>
-            </a>
-
-            <!-- Unified Framework Layer -->
-            <rect class="layer-box" x="50" y="620" width="1300" height="140" fill="#f0fff0" stroke="#228B22" stroke-width="3" rx="10"/>
-            <text x="700" y="650" font-size="18" text-anchor="middle" font-weight="bold">
-                Layer 3: Unified Framework ⭐
-            </text>
-
-            <a href="papers/paper.html?id=edm_2022" class="paper-box">
-                <rect x="450" y="670" width="500" height="70" fill="#ffffe0" stroke="#000" stroke-width="3" rx="5"/>
-                <text x="700" y="695" font-size="16" text-anchor="middle" font-weight="bold">EDM Framework</text>
-                <text x="700" y="715" font-size="11" text-anchor="middle" fill="#444">Karras et al. (NeurIPS 2022)</text>
-            </a>
-
-            <!-- Advanced Topics Layer -->
-            <rect class="layer-box" x="50" y="800" width="1300" height="160" fill="#fff0f5" stroke="#C71585" stroke-width="2" rx="10"/>
-            <text x="700" y="830" font-size="18" text-anchor="middle" font-weight="bold">
-                Layer 4: Advanced Topics
-            </text>
-
-            <a href="papers/paper.html?id=guidance_2022" class="paper-box">
-                <rect x="100" y="850" width="200" height="90" fill="#ffffff" stroke="#000" stroke-width="2" rx="5"/>
-                <text x="200" y="875" font-size="12" text-anchor="middle" font-weight="bold">Classifier-Free Guidance</text>
-                <text x="200" y="895" font-size="9" text-anchor="middle" fill="#444">Ho & Salimans (2022)</text>
-            </a>
-
-            <a href="papers/paper.html?id=dpm_solver_2022" class="paper-box">
-                <rect x="350" y="850" width="200" height="90" fill="#ffffff" stroke="#000" stroke-width="2" rx="5"/>
-                <text x="450" y="875" font-size="12" text-anchor="middle" font-weight="bold">DPM-Solver</text>
-                <text x="450" y="895" font-size="9" text-anchor="middle" fill="#444">Lu et al. (2022)</text>
-            </a>
-
-            <a href="papers/paper.html?id=flow_matching_2023" class="paper-box">
-                <rect x="600" y="850" width="200" height="90" fill="#ffffff" stroke="#000" stroke-width="2" rx="5"/>
-                <text x="700" y="875" font-size="12" text-anchor="middle" font-weight="bold">Flow Matching</text>
-                <text x="700" y="895" font-size="9" text-anchor="middle" fill="#444">Lipman et al. (2023)</text>
-            </a>
-
-            <a href="papers/paper.html?id=consistency_2023" class="paper-box">
-                <rect x="850" y="850" width="200" height="90" fill="#ffffff" stroke="#000" stroke-width="2" rx="5"/>
-                <text x="950" y="875" font-size="12" text-anchor="middle" font-weight="bold">Consistency Models</text>
-                <text x="950" y="895" font-size="9" text-anchor="middle" fill="#444">Song et al. (2023)</text>
-            </a>
-
-            <a href="papers/paper.html?id=schrodinger_2021" class="paper-box">
-                <rect x="1100" y="850" width="200" height="90" fill="#ffffff" stroke="#000" stroke-width="2" rx="5"/>
-                <text x="1200" y="875" font-size="12" text-anchor="middle" font-weight="bold">Schrödinger Bridge</text>
-                <text x="1200" y="895" font-size="9" text-anchor="middle" fill="#444">De Bortoli et al. (2021)</text>
-            </a>
-
-            <!-- Legend -->
-            <text x="50" y="980" font-size="11" fill="#666">
-                ⭐ = Highly Influential | Thick borders = Core papers | Hover over boxes to click
-            </text>
-        </svg>
+        <div id="chart-container"></div>
     </div>
 
-    <div id="info" style="display: none;">
-        <div id="infoContent" style="padding: 15px; font-family: 'Georgia', serif; font-size: 13px;">
-            Click on papers in the chart to see details.
-        </div>
-    </div>
-
+    <script src="js/notes-loader.js"></script>
+    <script src="js/data-loader.js"></script>
+    <script src="js/chart-renderer.js"></script>
     <script>
-        function filterPapers(category) {
-            alert('Filtering by: ' + category + '\n\nUse the search script:\n python ../scripts/search_papers.py --topic ' + category);
-        }
+        window.addEventListener('load', async function() {
+            NotesLoader.loadSidebar('notes-list');
+            await ChartRenderer.init({
+                container: '#chart-container',
+                showVariables: false,
+                enableDrag: false,
+                enableZoom: true,
+                showTooltip: true,
+                sidebarDetails: false
+            });
+        });
     </script>
 
 </body>
