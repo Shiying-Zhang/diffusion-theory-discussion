@@ -1,6 +1,6 @@
 # Score-Based Generative Modeling through Stochastic Diffusion Equations (Score-Based SDE)
 
-Author: Zichang Wang
+Notes Author: Zichang Wang
 
 本笔记旨在是阐释论文背后的数学直观，在阅读完论文后观看以获得最佳体验。
 
