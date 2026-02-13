@@ -40,10 +40,8 @@ jobs:
           # Copy root README
           cp README.md ./_site/
 
-          # Make interactive.html the main page
-          if [ -f ./_site/interactive.html ]; then
-            cp ./_site/interactive.html ./_site/index.html
-          fi
+          # index.html = Simple Chart, interactive.html = Interactive Chart
+          # 两个页面各自保留，不覆盖
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
