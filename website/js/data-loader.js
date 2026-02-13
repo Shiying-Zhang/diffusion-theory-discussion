@@ -11,13 +11,24 @@ const DataLoader = (() => {
 
     /**
      * 根据当前页面位置确定 data/ 目录的基础路径
+     * 本地开发: website/ 下，data 在 ../data/
+     * 线上部署: _site/ 根目录，data 在 data/
      */
-    function getDataBasePath() {
+    let _basePath = null;
+    async function getDataBasePath() {
+        if (_basePath) return _basePath;
         const path = window.location.pathname;
         if (path.includes('/papers/')) {
-            return '../../data/';
+            _basePath = '../../data/';
+            return _basePath;
         }
-        return '../data/';
+        // 先试同级 data/（线上），失败再试 ../data/（本地）
+        try {
+            const resp = await fetch('data/papers.json', { method: 'HEAD' });
+            if (resp.ok) { _basePath = 'data/'; return _basePath; }
+        } catch (e) { /* ignore */ }
+        _basePath = '../data/';
+        return _basePath;
     }
 
     /**
@@ -29,7 +40,7 @@ const DataLoader = (() => {
         if (_loading) return _loading;
 
         _loading = (async () => {
-            const url = getDataBasePath() + 'papers.json';
+            const url = (await getDataBasePath()) + 'papers.json';
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`Failed to load papers data: ${response.status}`);
@@ -51,7 +62,7 @@ const DataLoader = (() => {
         if (_chartLoading) return _chartLoading;
 
         _chartLoading = (async () => {
-            const url = getDataBasePath() + 'chart.json';
+            const url = (await getDataBasePath()) + 'chart.json';
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`Failed to load chart data: ${response.status}`);
@@ -99,13 +110,11 @@ const DataLoader = (() => {
     /**
      * 获取 notes 文件的正确路径（相对于当前页面）
      */
-    function getNotesPath(notesFile) {
+    async function getNotesPath(notesFile) {
         if (!notesFile) return null;
-        const path = window.location.pathname;
-        if (path.includes('/papers/')) {
-            return '../../' + notesFile;
-        }
-        return '../' + notesFile;
+        const base = await getDataBasePath();
+        // data/ → notes/ (同级); ../data/ → ../notes/
+        return base.replace('data/', 'notes/') + notesFile.replace(/^notes\//, '');
     }
 
     return {
